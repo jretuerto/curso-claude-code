@@ -2,7 +2,7 @@ import { ApplicationRef, provideZonelessChangeDetection, signal } from '@angular
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { ActivatedRoute, provideRouter, Router } from '@angular/router'
 import { LucideAngularModule, ChevronLeft, Plus, Trash2 } from 'lucide-angular'
-import { Observable, of } from 'rxjs'
+import { NEVER, Observable, of } from 'rxjs'
 import { vi } from 'vitest'
 import { IngredientStore } from '../../../ingredients/store/ingredient.store'
 import type { Ingredient } from '../../../ingredients/models/ingredient.model'
@@ -162,6 +162,41 @@ describe('DishFormComponent', () => {
       await settle()
       expect(document.activeElement?.id).not.toBe('dish-name')
       expect(document.activeElement?.id).not.toBe('dish-price')
+    })
+  })
+
+  describe('región de estado de carga y guardado', () => {
+    it('existe una región role=status aria-live=polite, vacía al inicio', async () => {
+      const { query } = await setup()
+      const status = query('[role="status"]')
+      expect(status).not.toBeNull()
+      expect(status.getAttribute('aria-live')).toBe('polite')
+      expect(status.textContent?.trim()).toBe('')
+    })
+
+    it('anuncia «Guardando el plato…» mientras se guarda', async () => {
+      const { query, component, dishStore, settle } = await setup()
+      dishStore.create.mockReturnValue(new Promise(() => {})) // guardado en curso
+      component.form.name = 'Tortilla'
+      component.form.price = 3
+      void component.onSubmit()
+      await settle()
+      expect(query('[role="status"]').textContent?.trim()).toBe('Guardando el plato…')
+    })
+
+    it('anuncia «Cargando el plato…» al abrir la edición', async () => {
+      const { query } = await setup({ dishId: 'dish-1', dish$: NEVER })
+      expect(query('[role="status"]').textContent?.trim()).toBe('Cargando el plato…')
+    })
+
+    it('el error general se anuncia con role=alert', async () => {
+      const { query, component, dishStore, settle } = await setup()
+      dishStore.create.mockRejectedValue({ error: { message: 'Fallo del servidor' } })
+      component.form.name = 'Tortilla'
+      component.form.price = 3
+      await component.onSubmit()
+      await settle()
+      expect(query('[role="alert"]').textContent?.trim()).toBe('Fallo del servidor')
     })
   })
 })

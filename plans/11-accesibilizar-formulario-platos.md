@@ -62,10 +62,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
   - [x] 5.1 U-rojo: tras un envío inválido, `document.activeElement` es `#dish-name`; si solo falla el precio, `#dish-price`.
   - [x] 5.2 Código (hecho en `869dd16`: `focusField()`) y e2e.
   - [x] 5.3 Verde: `ng test`.
-- [ ] 6. Región de estado «Cargando/Guardando».
-  - [ ] 6.1 U-rojo: existe un elemento `role="status"` con `aria-live="polite"` vacío al inicio, que contiene «Guardando el plato…» durante el guardado y «Cargando el plato…» al editar.
+- [x] 6. Región de estado «Cargando/Guardando».
+  - [x] 6.1 U-rojo: existe un elemento `role="status"` con `aria-live="polite"` vacío al inicio, que contiene «Guardando el plato…» durante el guardado y «Cargando el plato…» al editar.
   - [x] 6.2 Código (hecho en `b0622f8`: región `.sr-only`) y e2e.
-  - [ ] 6.3 Verde: `ng test`.
+  - [x] 6.3 Verde: `ng test`.
 - [ ] 7. Aviso y foco al añadir/quitar ingredientes.
   - [ ] 7.1 U-rojo: añadir un ingrediente deja «<nombre> añadido.» en la región de estado; quitarlo deja «<nombre> quitado.» y mueve el foco al chip que ocupa su lugar o, si no quedan chips, a `#new-ingredient`.
   - [x] 7.2 Código (hecho en `101126e`: `announcement`, `afterNextRender`, `id` en botones) y e2e.
