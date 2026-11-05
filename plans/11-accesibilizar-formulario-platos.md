@@ -74,10 +74,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
   - [x] 8.1 U-rojo: sin selección, cantidad ≤ 0 o ingrediente duplicado se muestra el mensaje, el control correspondiente queda con `aria-invalid="true"` y `aria-describedby`, y recibe el foco; no se añade nada.
   - [x] 8.2 Código (hecho en `3d3621a`: `ingredientError`, `rejectIngredient()`) y e2e.
   - [x] 8.3 Verde: `ng test`.
-- [ ] 9. Jerarquía de encabezados.
-  - [ ] 9.1 U-rojo: los encabezados del componente son `h1` y `h2` (sin `h3`) y la sección de ingredientes está etiquetada por el `h2`.
+- [x] 9. Jerarquía de encabezados.
+  - [x] 9.1 U-rojo: los encabezados del componente son `h1` y `h2` (sin `h3`) y la sección de ingredientes está etiquetada por el `h2`.
   - [x] 9.2 Código (hecho en `6f5c3b8`) y e2e.
-  - [ ] 9.3 Verde: `ng test`.
+  - [x] 9.3 Verde: `ng test`.
 - [x] 10. Objetivos táctiles ≥ 24×24 px del botón de quitar (hecho en `31984db`). Sin test unitario: jsdom no calcula maquetación; se verifica con el e2e de Playwright (`boundingBox`).
 - [x] 11. Contraste de placeholder y bordes (hecho en `6ef09e4`, global en `styles.css`). Sin test unitario: jsdom no resuelve estilos de hojas CSS externas; se verifica con el e2e de ratios y con axe `color-contrast`.
 - [ ] 12. Auditoría axe del formulario con el plugin `@axe-core/playwright`: ejecutar WCAG 2.2 AA (`wcag2a`, `wcag2aa`, `wcag21aa`, `wcag22aa`) sobre `app-dish-form` en estado inicial, con errores de validación visibles y con ingredientes añadidos; 0 violaciones.

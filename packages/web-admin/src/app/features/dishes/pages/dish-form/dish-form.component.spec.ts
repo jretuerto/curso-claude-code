@@ -296,5 +296,20 @@ describe('DishFormComponent', () => {
       expect(h.query('#new-ingredient').getAttribute('aria-invalid')).toBeNull()
     })
   })
+
+  describe('jerarquía de encabezados', () => {
+    it('solo hay un h1 y un h2, sin saltar niveles', async () => {
+      const { el } = await setup()
+      const levels = Array.from(el.querySelectorAll('h1, h2, h3, h4, h5, h6')).map(h => Number(h.tagName[1]))
+      expect(levels).toEqual([1, 2])
+    })
+
+    it('la sección de ingredientes está etiquetada por su h2', async () => {
+      const { query } = await setup()
+      const h2 = query('h2')
+      expect(h2.textContent?.trim()).toBe('Ingredientes del plato')
+      expect(query('section.ingredients-section').getAttribute('aria-labelledby')).toBe(h2.id)
+    })
+  })
 })
 
