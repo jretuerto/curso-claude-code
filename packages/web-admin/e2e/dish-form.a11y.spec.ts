@@ -52,6 +52,20 @@ test.describe('Formulario de platos - nombres accesibles', () => {
     await page.getByRole('button', { name: 'Guardar' }).click()
     await expect(form).toHaveAttribute('aria-busy', 'true')
   })
+
+  test('anuncia en una región de estado que el plato se está guardando', async ({ page }) => {
+    await page.route('**/api/v1/restaurants/*/dishes', async route => {
+      if (route.request().method() !== 'POST') return route.continue()
+      await new Promise(r => setTimeout(r, 1500))
+      await route.fulfill({ status: 201, contentType: 'application/json', body: '{}' })
+    })
+    const status = page.locator('app-dish-form').getByRole('status')
+    await expect(status).toHaveAttribute('aria-live', 'polite')
+    await expect(status).toBeEmpty()
+    await page.getByLabel('Nombre del plato').fill('Plato a11y status')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(status).toHaveText('Guardando el plato…')
+  })
 })
 
 test.describe('Formulario de platos - validación accesible', () => {

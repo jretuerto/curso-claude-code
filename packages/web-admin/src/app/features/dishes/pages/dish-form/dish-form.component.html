@@ -8,6 +8,8 @@
     </div>
   </div>
 
+  <div class="sr-only" role="status" aria-live="polite">@if (loading()) {{{ isEditing && !form.name ? 'Cargando el plato…' : 'Guardando el plato…' }}}</div>
+
   @if (error()) {
     <div class="alert-error" role="alert">{{ error() }}</div>
   }
