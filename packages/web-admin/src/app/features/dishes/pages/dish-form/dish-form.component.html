@@ -4,7 +4,7 @@
       <a [routerLink]="listUrl" class="back-link" aria-label="Volver al listado de platos">
         <lucide-icon name="chevron-left" [size]="18" aria-hidden="true"></lucide-icon>
       </a>
-      <h1>{{ pageTitle }}</h1>
+      <h1 id="dish-form-title">{{ pageTitle }}</h1>
     </div>
   </div>
 
@@ -12,7 +12,7 @@
     <div class="alert-error" role="alert">{{ error() }}</div>
   }
 
-  <form class="card form-card" (ngSubmit)="onSubmit()">
+  <form class="card form-card" aria-labelledby="dish-form-title" [attr.aria-busy]="loading()" (ngSubmit)="onSubmit()">
     <div class="form-grid">
       <div class="form-group">
         <label for="dish-name">Nombre del plato</label>

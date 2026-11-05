@@ -40,8 +40,8 @@ Corregir la falta de accesibilidad del formulario de creación/edición de plato
 Cada tarea debe poder completarse en 5-10 minutos.
 
 - [x] 1. Instalar Playwright y `@axe-core/playwright` en `web-admin`, crear `playwright.config.ts` (api en 3000 y web-admin en 4200 vía `webServer`) y el script `test:e2e`, con un test de humo que haga login con las credenciales de prueba y abra el formulario.
-- [ ] 2. Escribir test Playwright (rojo) de que cada control tiene nombre accesible (`getByRole` con nombre) y de que el `<form>` tiene nombre accesible; añadir una auditoría axe WCAG 2.2 AA del formulario.
-- [ ] 3. Añadir nombre accesible al `<form>` (`aria-labelledby` al `h1`) y `aria-busy` mientras `loading()` es true; hacer pasar los tests.
+- [x] 2. Escribir test Playwright (rojo) de que cada control tiene nombre accesible (`getByRole` con nombre) y de que el `<form>` tiene nombre accesible; añadir una auditoría axe WCAG 2.2 AA del formulario.
+- [x] 3. Añadir nombre accesible al `<form>` (`aria-labelledby` al `h1`) y `aria-busy` mientras `loading()` es true; hacer pasar los tests.
 - [ ] 4. Escribir test Playwright (rojo) de validación: enviar con nombre vacío o precio inválido muestra mensajes de error, marca `aria-invalid="true"` y enlaza `aria-describedby`.
 - [ ] 5. Implementar la validación por campo en `dish-form.component.ts` (señal de errores) y los mensajes en el HTML con `id` únicos.
 - [ ] 6. Escribir test Playwright (rojo) y implementar que, al fallar la validación, el foco pasa al primer campo inválido y no se envía el formulario.
