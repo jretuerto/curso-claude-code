@@ -44,7 +44,7 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - [x] 3. Añadir nombre accesible al `<form>` (`aria-labelledby` al `h1`) y `aria-busy` mientras `loading()` es true; hacer pasar los tests.
 - [x] 4. Escribir test Playwright (rojo) de validación: enviar con nombre vacío o precio inválido muestra mensajes de error, marca `aria-invalid="true"` y enlaza `aria-describedby`.
 - [x] 5. Implementar la validación por campo en `dish-form.component.ts` (señal de errores) y los mensajes en el HTML con `id` únicos.
-- [ ] 6. Escribir test Playwright (rojo) y implementar que, al fallar la validación, el foco pasa al primer campo inválido y no se envía el formulario.
+- [x] 6. Escribir test Playwright (rojo) y implementar que, al fallar la validación, el foco pasa al primer campo inválido y no se envía el formulario.
 - [ ] 7. Hacer que el `alert-error` general y los mensajes de estado se anuncien correctamente (`role="alert"` ya existe; añadir región `aria-live="polite"` para "Guardando…"/cargando).
 - [ ] 8. Escribir test Playwright (rojo) e implementar: añadir/quitar ingrediente anuncia el cambio en una región `aria-live` y, al quitar, el foco se mueve a un elemento lógico (siguiente chip, o el selector de ingrediente si no quedan).
 - [ ] 9. Dar feedback cuando "Añadir ingrediente" no puede ejecutarse (sin ingrediente, cantidad ≤ 0 o duplicado) con un mensaje asociado en lugar de salir en silencio.

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { Component, ElementRef, inject, OnInit, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { LucideAngularModule } from 'lucide-angular'
@@ -21,6 +21,7 @@ export class DishFormComponent implements OnInit {
   readonly ingredientStore = inject(IngredientStore)
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef)
 
   isEditing = false
   dishId: string | null = null
@@ -124,7 +125,13 @@ export class DishFormComponent implements OnInit {
     const priceValid = typeof price === 'number' && Number.isFinite(price) && price >= 0
     this.nameError.set(nameValid ? null : 'El nombre es obligatorio.')
     this.priceError.set(priceValid ? null : 'Introduce un precio igual o mayor que 0.')
+    if (!nameValid) this.focusField('dish-name')
+    else if (!priceValid) this.focusField('dish-price')
     return nameValid && priceValid
+  }
+
+  private focusField(id: string): void {
+    this.host.nativeElement.querySelector<HTMLElement>(`#${id}`)?.focus()
   }
 
   async onSubmit(): Promise<void> {

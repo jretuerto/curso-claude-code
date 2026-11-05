@@ -102,5 +102,14 @@ test.describe('Formulario de platos - validación accesible', () => {
     // Sin errores, el envío es válido y se vuelve al listado
     await expect(page).toHaveURL(/\/restaurants\/[^/]+\/dishes$/)
   })
-})
 
+  test('al fallar la validación el foco va al primer campo inválido', async ({ page }) => {
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(page.getByLabel('Nombre del plato')).toBeFocused()
+
+    await page.getByLabel('Nombre del plato').fill('Plato con precio vacío')
+    await page.getByLabel('Precio (€)').fill('')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(page.getByLabel('Precio (€)')).toBeFocused()
+  })
+})
