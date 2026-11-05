@@ -199,5 +199,51 @@ describe('DishFormComponent', () => {
       expect(query('[role="alert"]').textContent?.trim()).toBe('Fallo del servidor')
     })
   })
+
+  describe('ingredientes: avisos y foco', () => {
+    async function addTwo(h: Harness): Promise<void> {
+      for (const id of ['ing-1', 'ing-2']) {
+        h.component.newIngredientId = id
+        h.component.newIngredientQty = 2
+        h.component.addIngredient()
+      }
+      await h.settle()
+    }
+
+    it('añadir un ingrediente lo anuncia y lo muestra como chip', async () => {
+      const h = await setup()
+      h.component.newIngredientId = 'ing-1'
+      h.component.newIngredientQty = 2
+      h.component.addIngredient()
+      await h.settle()
+      expect(h.query('[role="status"]').textContent?.trim()).toBe('Tomate (kg) añadido.')
+      expect(h.el.querySelectorAll('.ingredient-chip')).toHaveLength(1)
+    })
+
+    it('quitar un ingrediente lo anuncia y pasa el foco al chip que ocupa su lugar', async () => {
+      const h = await setup()
+      await addTwo(h)
+      h.component.removeIngredient('ing-1')
+      await h.settle()
+      expect(h.query('[role="status"]').textContent?.trim()).toBe('Tomate (kg) quitado.')
+      expect(document.activeElement?.id).toBe('remove-ingredient-ing-2')
+    })
+
+    it('quitar el último chip devuelve el foco al selector de ingrediente', async () => {
+      const h = await setup()
+      await addTwo(h)
+      h.component.removeIngredient('ing-2')
+      h.component.removeIngredient('ing-1')
+      await h.settle()
+      expect(document.activeElement?.id).toBe('new-ingredient')
+    })
+
+    it('cada botón de quitar tiene id y nombre accesible con el ingrediente', async () => {
+      const h = await setup()
+      await addTwo(h)
+      const button = h.query('#remove-ingredient-ing-1')
+      expect(button.getAttribute('aria-label')).toBe('Quitar Tomate (kg)')
+    })
+  })
 })
 
