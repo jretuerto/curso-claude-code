@@ -26,6 +26,14 @@ test.describe('Formulario de platos - nombres accesibles', () => {
     await expect(page.getByRole('link', { name: 'Cancelar' })).toBeVisible()
   })
 
+  test('la jerarquía de encabezados no salta niveles', async ({ page }) => {
+    const levels = await page
+      .locator('app-dish-form')
+      .getByRole('heading')
+      .evaluateAll(hs => hs.map(h => Number(h.tagName.substring(1))))
+    expect(levels).toEqual([1, 2])
+  })
+
   test('auditoría axe WCAG 2.2 AA sin violaciones', async ({ page }) => {
     const results = await new AxeBuilder({ page })
       .include('app-dish-form')

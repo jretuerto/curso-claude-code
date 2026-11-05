@@ -48,7 +48,7 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - [x] 7. Hacer que el `alert-error` general y los mensajes de estado se anuncien correctamente (`role="alert"` ya existe; añadir región `aria-live="polite"` para "Guardando…"/cargando).
 - [x] 8. Escribir test Playwright (rojo) e implementar: añadir/quitar ingrediente anuncia el cambio en una región `aria-live` y, al quitar, el foco se mueve a un elemento lógico (siguiente chip, o el selector de ingrediente si no quedan).
 - [x] 9. Dar feedback cuando "Añadir ingrediente" no puede ejecutarse (sin ingrediente, cantidad ≤ 0 o duplicado) con un mensaje asociado en lugar de salir en silencio.
-- [ ] 10. Corregir la jerarquía de encabezados (`h1` → `h3` en la sección de ingredientes pasa a `h2`) y verificar el estilo en el CSS.
+- [x] 10. Corregir la jerarquía de encabezados (`h1` → `h3` en la sección de ingredientes pasa a `h2`) y verificar el estilo en el CSS.
 - [ ] 11. Aumentar el área del botón `.chip-remove` a ≥ 24×24 px y revisar el espaciado de los botones de la fila de añadir ingrediente.
 - [ ] 12. Medir contraste de placeholder, `--text-muted`, `--text-secondary` y `--border-color` sobre `--bg-input`/`--bg-card`; ajustar tokens afectados para cumplir 4.5:1 (texto) y 3:1 (bordes) sin romper otras pantallas.
 - [ ] 13. Verificación manual con teclado (Tab/Shift+Tab/Enter/Espacio) del flujo completo crear y editar, comprobando foco visible en todos los controles, y con un lector de pantalla o la pestaña Accessibility de DevTools.

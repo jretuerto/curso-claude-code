@@ -42,7 +42,7 @@ textarea.form-control {
   border-top: 1px solid var(--border-color);
 }
 
-.ingredients-section h3 {
+.ingredients-section h2 {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
