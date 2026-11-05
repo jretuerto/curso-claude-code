@@ -240,3 +240,70 @@ test.describe('Formulario de platos - contraste', () => {
   })
 })
 
+test.describe('Formulario de platos - solo teclado', () => {
+  test('orden de tabulación lógico y foco visible en cada control', async ({ page }) => {
+    await openNewDishForm(page)
+    await page.getByLabel('Nombre del plato').focus()
+
+    const expected = [
+      'Nombre del plato',
+      'Precio (€)',
+      'Categoría',
+      'Disponible',
+      'Descripción (opcional)',
+      'Ingrediente a añadir',
+      'Cantidad del ingrediente',
+      'Añadir ingrediente',
+      'Cancelar',
+      'Guardar'
+    ]
+    const visited: string[] = []
+    for (let i = 0; i < expected.length; i++) {
+      const info = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement
+        const cs = getComputedStyle(el)
+        const labelled = el.id && document.querySelector(`label[for="${el.id}"]`)?.textContent
+        return {
+          name: (labelled || el.getAttribute('aria-label') || el.textContent || '').trim(),
+          visible: cs.outlineStyle !== 'none' || cs.boxShadow !== 'none'
+        }
+      })
+      expect(info.visible, `foco visible en "${info.name}"`).toBe(true)
+      visited.push(info.name)
+      if (i < expected.length - 1) await page.keyboard.press('Tab')
+    }
+    expect(visited).toEqual(expected)
+  })
+
+  test('se puede crear un plato con ingrediente usando solo el teclado', async ({ page }) => {
+    let body: any = null
+    await page.route('**/api/v1/restaurants/*/dishes', route => {
+      if (route.request().method() !== 'POST') return route.continue()
+      body = route.request().postDataJSON()
+      return route.fulfill({ status: 201, contentType: 'application/json', body: '{}' })
+    })
+    await openNewDishForm(page)
+    await expect(page.getByRole('combobox', { name: 'Ingrediente a añadir' }).locator('option')).not.toHaveCount(1)
+
+    await page.getByLabel('Nombre del plato').focus()
+    await page.keyboard.type('Plato solo teclado')
+    await page.keyboard.press('Tab')
+    await page.keyboard.type('7.5')
+    await page.keyboard.press('Tab') // categoría
+    await page.keyboard.press('Tab') // disponible
+    await page.keyboard.press('Tab') // descripción
+    await page.keyboard.press('Tab') // selector de ingrediente
+    // En macOS ArrowDown abre el desplegable nativo, así que la opción se elige con selectOption
+    await page.getByRole('combobox', { name: 'Ingrediente a añadir' }).selectOption({ index: 1 })
+    await page.keyboard.press('Tab') // cantidad
+    await page.keyboard.press('Enter') // Enter en la cantidad añade el ingrediente
+    await expect(page.getByRole('list', { name: 'Ingredientes añadidos' }).getByRole('listitem')).toHaveCount(1)
+
+    await page.getByRole('button', { name: 'Guardar' }).focus()
+    await page.keyboard.press('Enter')
+    await expect(page).toHaveURL(/\/restaurants\/[^/]+\/dishes$/)
+    expect(body).toMatchObject({ name: 'Plato solo teclado', price: 7.5 })
+    expect(body.ingredients).toHaveLength(1)
+  })
+})
+

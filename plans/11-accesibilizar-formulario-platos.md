@@ -51,7 +51,7 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - [x] 10. Corregir la jerarquía de encabezados (`h1` → `h3` en la sección de ingredientes pasa a `h2`) y verificar el estilo en el CSS.
 - [x] 11. Aumentar el área del botón `.chip-remove` a ≥ 24×24 px y revisar el espaciado de los botones de la fila de añadir ingrediente.
 - [x] 12. Medir contraste de placeholder, `--text-muted`, `--text-secondary` y `--border-color` sobre `--bg-input`/`--bg-card`; ajustar tokens afectados para cumplir 4.5:1 (texto) y 3:1 (bordes) sin romper otras pantallas.
-- [ ] 13. Verificación manual con teclado (Tab/Shift+Tab/Enter/Espacio) del flujo completo crear y editar, comprobando foco visible en todos los controles, y con un lector de pantalla o la pestaña Accessibility de DevTools.
+- [x] 13. Verificación manual con teclado (Tab/Shift+Tab/Enter/Espacio) del flujo completo crear y editar, comprobando foco visible en todos los controles, y con un lector de pantalla o la pestaña Accessibility de DevTools.
 - [ ] 14. Ejecutar `npm run test:e2e`, `ng build` de `web-admin` y el formateo/lint que use el proyecto; corregir lo que falle.
 
 ## Criterios de aceptación
