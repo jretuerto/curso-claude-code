@@ -70,10 +70,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
   - [x] 7.1 U-rojo: añadir un ingrediente deja «<nombre> añadido.» en la región de estado; quitarlo deja «<nombre> quitado.» y mueve el foco al chip que ocupa su lugar o, si no quedan chips, a `#new-ingredient`.
   - [x] 7.2 Código (hecho en `101126e`: `announcement`, `afterNextRender`, `id` en botones) y e2e.
   - [x] 7.3 Verde: `ng test`.
-- [ ] 8. Feedback cuando no se puede añadir un ingrediente.
-  - [ ] 8.1 U-rojo: sin selección, cantidad ≤ 0 o ingrediente duplicado se muestra el mensaje, el control correspondiente queda con `aria-invalid="true"` y `aria-describedby`, y recibe el foco; no se añade nada.
+- [x] 8. Feedback cuando no se puede añadir un ingrediente.
+  - [x] 8.1 U-rojo: sin selección, cantidad ≤ 0 o ingrediente duplicado se muestra el mensaje, el control correspondiente queda con `aria-invalid="true"` y `aria-describedby`, y recibe el foco; no se añade nada.
   - [x] 8.2 Código (hecho en `3d3621a`: `ingredientError`, `rejectIngredient()`) y e2e.
-  - [ ] 8.3 Verde: `ng test`.
+  - [x] 8.3 Verde: `ng test`.
 - [ ] 9. Jerarquía de encabezados.
   - [ ] 9.1 U-rojo: los encabezados del componente son `h1` y `h2` (sin `h3`) y la sección de ingredientes está etiquetada por el `h2`.
   - [x] 9.2 Código (hecho en `6f5c3b8`) y e2e.

@@ -245,5 +245,56 @@ describe('DishFormComponent', () => {
       expect(button.getAttribute('aria-label')).toBe('Quitar Tomate (kg)')
     })
   })
+
+  describe('feedback al no poder añadir un ingrediente', () => {
+    it('sin ingrediente seleccionado enlaza el error al selector y le da el foco', async () => {
+      const h = await setup()
+      h.component.newIngredientId = ''
+      h.component.addIngredient()
+      await h.settle()
+      const select = h.query('#new-ingredient')
+      expect(select.getAttribute('aria-invalid')).toBe('true')
+      expect(select.getAttribute('aria-describedby')).toBe('ingredient-error')
+      expect(h.query('#ingredient-error').textContent?.trim()).toBe('Selecciona un ingrediente.')
+      expect(document.activeElement).toBe(select)
+      expect(h.el.querySelectorAll('.ingredient-chip')).toHaveLength(0)
+    })
+
+    it('con cantidad 0 enlaza el error a la cantidad y le da el foco', async () => {
+      const h = await setup()
+      h.component.newIngredientId = 'ing-1'
+      h.component.newIngredientQty = 0
+      h.component.addIngredient()
+      await h.settle()
+      const qty = h.query('#new-ingredient-qty')
+      expect(qty.getAttribute('aria-invalid')).toBe('true')
+      expect(qty.getAttribute('aria-describedby')).toBe('ingredient-error')
+      expect(h.query('#ingredient-error').textContent?.trim()).toBe('La cantidad debe ser mayor que 0.')
+      expect(document.activeElement).toBe(qty)
+      expect(h.query('#new-ingredient').getAttribute('aria-invalid')).toBeNull()
+    })
+
+    it('un ingrediente repetido muestra el error y no se duplica', async () => {
+      const h = await setup()
+      h.component.newIngredientId = 'ing-1'
+      h.component.addIngredient()
+      h.component.newIngredientId = 'ing-1'
+      h.component.addIngredient()
+      await h.settle()
+      expect(h.query('#ingredient-error').textContent?.trim()).toBe('Este ingrediente ya está añadido.')
+      expect(h.component.form.ingredients).toHaveLength(1)
+    })
+
+    it('un añadido correcto limpia el error anterior', async () => {
+      const h = await setup()
+      h.component.newIngredientId = ''
+      h.component.addIngredient()
+      h.component.newIngredientId = 'ing-2'
+      h.component.addIngredient()
+      await h.settle()
+      expect(h.query('#ingredient-error')).toBeNull()
+      expect(h.query('#new-ingredient').getAttribute('aria-invalid')).toBeNull()
+    })
+  })
 })
 
