@@ -47,9 +47,9 @@ Corregir la falta de accesibilidad del formulario de creación/edición de plato
 Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento siguen TDD con **tests unitarios Vitest**: *U-rojo* (test unitario que falla por la razón esperada), *código* (mínimo para ponerlo en verde) y *verde* (`ng test` en verde y `ng build`). Si el código de una tarea ya existe, el *U-rojo* se comprueba desactivando temporalmente ese código.
 
 - [x] 1. Instalar Playwright y `@axe-core/playwright` en `web-admin`, crear `playwright.config.ts` (api en 3000 y web-admin en 4200 vía `webServer`) y el script `test:e2e`, con un test de humo e2e.
-- [ ] 2. Configurar Vitest unitario en Angular.
-  - [ ] 2.1 Añadir `vitest` y `jsdom` a `web-admin`, el target `test` (`@angular/build:unit-test`, runner `vitest`) en `angular.json` y el script `test`.
-  - [ ] 2.2 Test unitario de humo: `DishFormComponent` se crea con `TestBed` (providers falsos de `DishStore`, `DishService`, `IngredientStore`, `ActivatedRoute` y `Router`) y muestra el título «Nuevo plato».
+- [x] 2. Configurar Vitest unitario en Angular.
+  - [x] 2.1 Añadir `vitest` y `jsdom` a `web-admin`, el target `test` (`@angular/build:unit-test`, runner `vitest`) en `angular.json` y el script `test`.
+  - [x] 2.2 Test unitario de humo: `DishFormComponent` se crea con `TestBed` (providers falsos de `DishStore`, `DishService`, `IngredientStore`, `ActivatedRoute` y `Router`) y muestra el título «Nuevo plato».
 - [ ] 3. Nombre accesible del formulario y `aria-busy`.
   - [ ] 3.1 U-rojo: el `<form>` tiene `aria-labelledby` apuntando al `h1`, y `aria-busy` es `"true"` mientras `loading()` es true.
   - [x] 3.2 Código (hecho en `6fc9e78`: `aria-labelledby` y `[attr.aria-busy]`) y e2e con axe de nombres accesibles.
