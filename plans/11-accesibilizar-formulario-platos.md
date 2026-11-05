@@ -85,7 +85,7 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
   - [x] 13.1 Escribir `e2e/dish-form.video.spec.ts` con grabación de vídeo activada: login con teclado, ir al listado de platos y abrir «Nuevo plato» con Tab/Enter, rellenar nombre, precio, categoría y descripción, añadir y quitar algún ingrediente.
   - [x] 13.2 Ampliar el flujo: enviar el formulario incompleto para mostrar los errores, corregirlo, crear bien el plato y comprobar que aparece en el listado; borrar el plato creado al terminar (limpieza vía API).
   - [x] 13.3 Ajustar `playwright.config.ts`/`saveAs` para guardar el vídeo como `packages/web-admin/e2e-videos/dish-form-teclado.webm`, con pausas legibles (`pressSequentially` con retardo) y sin usar el ratón; ajustar `.gitignore`.
-- [ ] 14. Cierre: ejecutar `ng test` (Vitest), `npm run test:e2e`, `ng build` de `web-admin` y `npm test` de la API; comprobar que el vídeo existe y reproduce el flujo completo.
+- [x] 14. Cierre: ejecutar `ng test` (Vitest), `npm run test:e2e`, `ng build` de `web-admin` y `npm test` de la API; comprobar que el vídeo existe y reproduce el flujo completo.
 
 ## Criterios de aceptación
 
@@ -117,3 +117,7 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
 - Las tareas 10 y 11 (CSS puro) no llevan test unitario porque jsdom no calcula maquetación ni resuelve el contraste; se cubren con e2e y axe.
 - Lint y formato: el proyecto no tiene eslint ni configuración de prettier, así que no se aplican; la verificación se limita a tests y `ng build`.
 - El test e2e de teclado elige la opción del selector con `selectOption`, porque en macOS `ArrowDown` abre el desplegable nativo.
+- Tests unitarios añadidos a posteriori (opción elegida): el rojo de cada tarea se comprobó restaurando temporalmente el componente a la versión anterior al commit de esa tarea. Un test de `novalidate` se descartó porque `FormsModule` ya lo añade y no discriminaba.
+- El builder de Angular ejecuta Vitest 3.2.4 (el de la raíz, usado por la API) aunque `web-admin` declara `vitest@4.1.12`; los tests funcionan igual. Conviene unificar versiones en otra tarea.
+- El vídeo se versiona en git (asunción mientras no se indique lo contrario) y la ejecución completa de `npm run test:e2e` lo regenera.
+- Incidencia detectada: `npm run seed` duplica los platos en cada ejecución. Una versión previa de `playwright.config.ts` lo lanzaba en cada arranque, por lo que `resttek.db` local tiene cada plato del seed repetido 33 veces; la configuración ya está corregida. Para limpiarlo, borrar `packages/api/resttek.db` y ejecutar `npm run seed` una vez (no se ha tocado el fichero `.db`).
