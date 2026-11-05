@@ -52,17 +52,17 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - [x] 11. Aumentar el área del botón `.chip-remove` a ≥ 24×24 px y revisar el espaciado de los botones de la fila de añadir ingrediente.
 - [x] 12. Medir contraste de placeholder, `--text-muted`, `--text-secondary` y `--border-color` sobre `--bg-input`/`--bg-card`; ajustar tokens afectados para cumplir 4.5:1 (texto) y 3:1 (bordes) sin romper otras pantallas.
 - [x] 13. Verificación manual con teclado (Tab/Shift+Tab/Enter/Espacio) del flujo completo crear y editar, comprobando foco visible en todos los controles, y con un lector de pantalla o la pestaña Accessibility de DevTools.
-- [ ] 14. Ejecutar `npm run test:e2e`, `ng build` de `web-admin` y el formateo/lint que use el proyecto; corregir lo que falle.
+- [x] 14. Ejecutar `npm run test:e2e`, `ng build` de `web-admin` y el formateo/lint que use el proyecto; corregir lo que falle.
 
 ## Criterios de aceptación
 
-- [ ] Se puede crear y editar un plato completo (incluidos los ingredientes) usando solo el teclado, en un orden de tabulación lógico (nombre → precio → categoría → disponible → descripción → ingredientes → Cancelar → Guardar).
-- [ ] El foco es visible en todos los controles interactivos del formulario.
-- [ ] Al enviar con datos inválidos, aparecen mensajes de error junto a cada campo, enlazados con `aria-describedby`, con `aria-invalid="true"`, y el foco va al primer campo inválido.
-- [ ] Añadir, quitar o fallar al añadir un ingrediente se comunica a lectores de pantalla mediante una región `aria-live`.
-- [ ] Todos los controles tienen nombre accesible y la jerarquía de encabezados no salta niveles.
-- [ ] Los objetivos interactivos miden al menos 24×24 px y el contraste cumple 4.5:1 (texto) y 3:1 (bordes de controles).
-- [ ] Los tests Playwright (incluida la auditoría axe sin violaciones AA) pasan y `ng build` de `web-admin` compila sin errores.
+- [x] Se puede crear y editar un plato completo (incluidos los ingredientes) usando solo el teclado, en un orden de tabulación lógico (nombre → precio → categoría → disponible → descripción → ingredientes → Cancelar → Guardar).
+- [x] El foco es visible en todos los controles interactivos del formulario.
+- [x] Al enviar con datos inválidos, aparecen mensajes de error junto a cada campo, enlazados con `aria-describedby`, con `aria-invalid="true"`, y el foco va al primer campo inválido.
+- [x] Añadir, quitar o fallar al añadir un ingrediente se comunica a lectores de pantalla mediante una región `aria-live`.
+- [x] Todos los controles tienen nombre accesible y la jerarquía de encabezados no salta niveles.
+- [x] Los objetivos interactivos miden al menos 24×24 px y el contraste cumple 4.5:1 (texto) y 3:1 (bordes de controles).
+- [x] Los tests Playwright (incluida la auditoría axe sin violaciones AA) pasan y `ng build` de `web-admin` compila sin errores.
 
 ## Dudas y decisiones tomadas
 
@@ -77,3 +77,5 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - Confirmado por el usuario: el número de issue es #11, el tipo es `bugfix` y los tests se harán con Playwright (e2e), no con tests unitarios de componente.
 - Los tests e2e necesitan la base de datos con datos de prueba (`npm run seed`) y las credenciales de prueba del README.
 - Contraste (tarea 12), decidido por el usuario: corrección global en `packages/web-admin/src/styles.css` (nuevo token `--border-control` y placeholder con `--text-secondary`), lo que afecta a todos los formularios de `web-admin`. Los textos ya cumplían 4,5:1 una vez terminada la animación `fade-in`; los fallos reales eran el placeholder (2,64:1) y el borde de los controles (1,19:1).
+- Lint y formato (tarea 14): el proyecto no tiene eslint ni configuración de prettier, así que no se han aplicado; la verificación se limitó a `ng build`, `npm run test:e2e` (19 tests) y `npm test` de la API (66 tests).
+- El test de teclado elige la opción del selector con `selectOption`, porque en macOS `ArrowDown` abre el desplegable nativo.
