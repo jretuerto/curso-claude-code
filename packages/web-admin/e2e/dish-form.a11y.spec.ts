@@ -163,5 +163,32 @@ test.describe('Formulario de platos - ingredientes accesibles', () => {
     await page.getByRole('button', { name: /^Quitar / }).click()
     await expect(page.getByRole('combobox', { name: 'Ingrediente a añadir' })).toBeFocused()
   })
+
+  test('añadir sin seleccionar ingrediente muestra un error enlazado al selector', async ({ page }) => {
+    await page.getByRole('button', { name: 'Añadir ingrediente' }).click()
+    const select = page.getByRole('combobox', { name: 'Ingrediente a añadir' })
+    await expect(select).toHaveAttribute('aria-invalid', 'true')
+    await expect(select).toHaveAccessibleDescription('Selecciona un ingrediente.')
+    await expect(select).toBeFocused()
+  })
+
+  test('añadir con cantidad 0 muestra un error enlazado a la cantidad', async ({ page }) => {
+    await page.getByRole('combobox', { name: 'Ingrediente a añadir' }).selectOption({ index: 1 })
+    const qty = page.getByRole('spinbutton', { name: 'Cantidad del ingrediente' })
+    await qty.fill('0')
+    await page.getByRole('button', { name: 'Añadir ingrediente' }).click()
+    await expect(qty).toHaveAttribute('aria-invalid', 'true')
+    await expect(qty).toHaveAccessibleDescription('La cantidad debe ser mayor que 0.')
+    await expect(qty).toBeFocused()
+  })
+
+  test('añadir un ingrediente repetido muestra un error y no lo duplica', async ({ page }) => {
+    await addIngredient(page, 1)
+    const select = page.getByRole('combobox', { name: 'Ingrediente a añadir' })
+    await select.selectOption({ index: 1 })
+    await page.getByRole('button', { name: 'Añadir ingrediente' }).click()
+    await expect(select).toHaveAccessibleDescription('Este ingrediente ya está añadido.')
+    await expect(page.getByRole('list', { name: 'Ingredientes añadidos' }).getByRole('listitem')).toHaveCount(1)
+  })
 })
 

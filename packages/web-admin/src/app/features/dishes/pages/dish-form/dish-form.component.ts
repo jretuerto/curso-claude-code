@@ -32,6 +32,7 @@ export class DishFormComponent implements OnInit {
   nameError = signal<string | null>(null)
   priceError = signal<string | null>(null)
   announcement = signal('')
+  ingredientError = signal<{ field: 'select' | 'qty'; message: string } | null>(null)
 
   categories: DishCategory[] = ['entrante', 'principal', 'postre', 'bebida']
 
@@ -100,9 +101,13 @@ export class DishFormComponent implements OnInit {
   }
 
   addIngredient(): void {
-    if (!this.newIngredientId || this.newIngredientQty <= 0) return
+    if (!this.newIngredientId) return this.rejectIngredient('select', 'new-ingredient', 'Selecciona un ingrediente.')
+    if (!(this.newIngredientQty > 0)) {
+      return this.rejectIngredient('qty', 'new-ingredient-qty', 'La cantidad debe ser mayor que 0.')
+    }
     const exists = this.form.ingredients.find(i => i.ingredientId === this.newIngredientId)
-    if (exists) return
+    if (exists) return this.rejectIngredient('select', 'new-ingredient', 'Este ingrediente ya está añadido.')
+    this.ingredientError.set(null)
 
     this.form.ingredients = [
       ...this.form.ingredients,
@@ -111,6 +116,11 @@ export class DishFormComponent implements OnInit {
     this.announcement.set(`${this.getIngredientName(this.newIngredientId)} añadido.`)
     this.newIngredientId = ''
     this.newIngredientQty = 1
+  }
+
+  private rejectIngredient(field: 'select' | 'qty', focusId: string, message: string): void {
+    this.ingredientError.set({ field, message })
+    this.focusField(focusId)
   }
 
   removeIngredient(ingredientId: string): void {
