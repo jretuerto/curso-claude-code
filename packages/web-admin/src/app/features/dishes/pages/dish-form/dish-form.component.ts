@@ -27,6 +27,8 @@ export class DishFormComponent implements OnInit {
   restaurantId: string = ''
   loading = signal(false)
   error = signal<string | null>(null)
+  nameError = signal<string | null>(null)
+  priceError = signal<string | null>(null)
 
   categories: DishCategory[] = ['entrante', 'principal', 'postre', 'bebida']
 
@@ -116,8 +118,18 @@ export class DishFormComponent implements OnInit {
     return ingredient ? `${ingredient.name} (${ingredient.unit})` : ingredientId
   }
 
+  private validate(): boolean {
+    const nameValid = (this.form.name ?? '').trim().length > 0
+    const price = this.form.price as number | null
+    const priceValid = typeof price === 'number' && Number.isFinite(price) && price >= 0
+    this.nameError.set(nameValid ? null : 'El nombre es obligatorio.')
+    this.priceError.set(priceValid ? null : 'Introduce un precio igual o mayor que 0.')
+    return nameValid && priceValid
+  }
+
   async onSubmit(): Promise<void> {
     this.error.set(null)
+    if (!this.validate()) return
     this.loading.set(true)
     try {
       if (this.isEditing && this.dishId) {

@@ -53,3 +53,54 @@ test.describe('Formulario de platos - nombres accesibles', () => {
     await expect(form).toHaveAttribute('aria-busy', 'true')
   })
 })
+
+test.describe('Formulario de platos - validación accesible', () => {
+  test.beforeEach(async ({ page }) => {
+    await openNewDishForm(page)
+  })
+
+  test('enviar con nombre vacío muestra el error enlazado al campo', async ({ page }) => {
+    let posts = 0
+    await page.route('**/api/v1/restaurants/*/dishes', route => {
+      if (route.request().method() === 'POST') posts++
+      return route.continue()
+    })
+    await page.getByLabel('Precio (€)').fill('5')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+
+    const name = page.getByLabel('Nombre del plato')
+    await expect(name).toHaveAttribute('aria-invalid', 'true')
+    await expect(name).toHaveAccessibleDescription('El nombre es obligatorio.')
+    await expect(page.getByLabel('Precio (€)')).not.toHaveAttribute('aria-invalid', 'true')
+    expect(posts).toBe(0)
+  })
+
+  test('enviar con precio vacío o negativo muestra el error enlazado al campo', async ({ page }) => {
+    await page.getByLabel('Nombre del plato').fill('Plato de prueba')
+    const price = page.getByLabel('Precio (€)')
+    await price.fill('')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(price).toHaveAttribute('aria-invalid', 'true')
+    await expect(price).toHaveAccessibleDescription('Introduce un precio igual o mayor que 0.')
+
+    await price.fill('-3')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(price).toHaveAccessibleDescription('Introduce un precio igual o mayor que 0.')
+  })
+
+  test('tras corregir el campo el formulario se envía sin errores', async ({ page }) => {
+    await page.route('**/api/v1/restaurants/*/dishes', route =>
+      route.request().method() === 'POST'
+        ? route.fulfill({ status: 201, contentType: 'application/json', body: '{}' })
+        : route.continue()
+    )
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    const name = page.getByLabel('Nombre del plato')
+    await expect(name).toHaveAttribute('aria-invalid', 'true')
+    await name.fill('Otro plato')
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    // Sin errores, el envío es válido y se vuelve al listado
+    await expect(page).toHaveURL(/\/restaurants\/[^/]+\/dishes$/)
+  })
+})
+

@@ -12,16 +12,24 @@
     <div class="alert-error" role="alert">{{ error() }}</div>
   }
 
-  <form class="card form-card" aria-labelledby="dish-form-title" [attr.aria-busy]="loading()" (ngSubmit)="onSubmit()">
+  <form class="card form-card" novalidate aria-labelledby="dish-form-title" [attr.aria-busy]="loading()" (ngSubmit)="onSubmit()">
     <div class="form-grid">
       <div class="form-group">
         <label for="dish-name">Nombre del plato</label>
-        <input id="dish-name" type="text" required aria-required="true" class="form-control" [(ngModel)]="form.name" name="name" placeholder="Ensalada César" />
+        <input id="dish-name" type="text" required aria-required="true" class="form-control" [(ngModel)]="form.name" name="name" placeholder="Ensalada César"
+          [attr.aria-invalid]="nameError() ? 'true' : null" [attr.aria-describedby]="nameError() ? 'dish-name-error' : null" />
+        @if (nameError()) {
+          <p id="dish-name-error" class="field-error">{{ nameError() }}</p>
+        }
       </div>
 
       <div class="form-group">
         <label for="dish-price">Precio (€)</label>
-        <input id="dish-price" type="number" min="0" step="0.01" required aria-required="true" class="form-control" [(ngModel)]="form.price" name="price" />
+        <input id="dish-price" type="number" min="0" step="0.01" required aria-required="true" class="form-control" [(ngModel)]="form.price" name="price"
+          [attr.aria-invalid]="priceError() ? 'true' : null" [attr.aria-describedby]="priceError() ? 'dish-price-error' : null" />
+        @if (priceError()) {
+          <p id="dish-price-error" class="field-error">{{ priceError() }}</p>
+        }
       </div>
 
       <div class="form-group">

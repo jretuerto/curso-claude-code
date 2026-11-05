@@ -126,3 +126,12 @@ select.form-control {
   padding: 0;
   margin: 0 0 14px;
 }
+
+.field-error {
+  color: var(--red);
+  font-size: 13px;
+}
+
+.form-control[aria-invalid='true'] {
+  border-color: var(--red);
+}
