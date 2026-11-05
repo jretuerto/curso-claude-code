@@ -4,3 +4,5 @@ node_modules/
 .angular/
 dist/
 .env
+test-results/
+playwright-report/
