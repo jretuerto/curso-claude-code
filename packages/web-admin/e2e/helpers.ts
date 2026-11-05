@@ -14,4 +14,6 @@ export async function openNewDishForm(page: Page): Promise<void> {
   await loginAsAdmin(page)
   await page.goto(`/restaurants/${RESTAURANT_ID}/dishes/new`)
   await expect(page.getByRole('heading', { level: 1, name: 'Nuevo plato' })).toBeVisible()
+  // Espera a que acaben las animaciones (fade-in): mezclan colores y falsean las medidas de contraste
+  await page.evaluate(() => Promise.all(document.getAnimations().map(a => a.finished)))
 }

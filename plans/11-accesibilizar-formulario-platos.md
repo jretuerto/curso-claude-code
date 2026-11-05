@@ -50,7 +50,7 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - [x] 9. Dar feedback cuando "Añadir ingrediente" no puede ejecutarse (sin ingrediente, cantidad ≤ 0 o duplicado) con un mensaje asociado en lugar de salir en silencio.
 - [x] 10. Corregir la jerarquía de encabezados (`h1` → `h3` en la sección de ingredientes pasa a `h2`) y verificar el estilo en el CSS.
 - [x] 11. Aumentar el área del botón `.chip-remove` a ≥ 24×24 px y revisar el espaciado de los botones de la fila de añadir ingrediente.
-- [ ] 12. Medir contraste de placeholder, `--text-muted`, `--text-secondary` y `--border-color` sobre `--bg-input`/`--bg-card`; ajustar tokens afectados para cumplir 4.5:1 (texto) y 3:1 (bordes) sin romper otras pantallas.
+- [x] 12. Medir contraste de placeholder, `--text-muted`, `--text-secondary` y `--border-color` sobre `--bg-input`/`--bg-card`; ajustar tokens afectados para cumplir 4.5:1 (texto) y 3:1 (bordes) sin romper otras pantallas.
 - [ ] 13. Verificación manual con teclado (Tab/Shift+Tab/Enter/Espacio) del flujo completo crear y editar, comprobando foco visible en todos los controles, y con un lector de pantalla o la pestaña Accessibility de DevTools.
 - [ ] 14. Ejecutar `npm run test:e2e`, `ng build` de `web-admin` y el formateo/lint que use el proyecto; corregir lo que falle.
 
@@ -67,7 +67,7 @@ Cada tarea debe poder completarse en 5-10 minutos.
 ## Dudas y decisiones tomadas
 
 **Dudas abiertas**
-- ¿Se deben cambiar los tokens de color globales si el contraste falla, aunque afecte a otras pantallas, o limitarlo a estilos del formulario?
+- Ninguna
 
 **Decisiones asumidas**
 - Se sigue la estructura real del repositorio (Angular 21, TypeScript, `packages/web-admin/...`) en lugar de las rutas `src/<capa>/<recurso>.<capa>.js` de la plantilla, que corresponden a la API y no aplican a este plan.
@@ -76,3 +76,4 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - Los estados (cargando/guardado) se anuncian con `aria-live="polite"` y los errores con `role="alert"` (ya existente).
 - Confirmado por el usuario: el número de issue es #11, el tipo es `bugfix` y los tests se harán con Playwright (e2e), no con tests unitarios de componente.
 - Los tests e2e necesitan la base de datos con datos de prueba (`npm run seed`) y las credenciales de prueba del README.
+- Contraste (tarea 12), decidido por el usuario: corrección global en `packages/web-admin/src/styles.css` (nuevo token `--border-control` y placeholder con `--text-secondary`), lo que afecta a todos los formularios de `web-admin`. Los textos ya cumplían 4,5:1 una vez terminada la animación `fade-in`; los fallos reales eran el placeholder (2,64:1) y el borde de los controles (1,19:1).

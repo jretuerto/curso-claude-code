@@ -38,8 +38,6 @@ test.describe('Formulario de platos - nombres accesibles', () => {
     const results = await new AxeBuilder({ page })
       .include('app-dish-form')
       .withTags(WCAG_TAGS)
-      // TODO(tarea 12): reactivar color-contrast al corregir el contraste del formulario
-      .disableRules(['color-contrast'])
       .analyze()
     expect(
       results.violations.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(' ')).join(' | ')}`)
@@ -210,6 +208,35 @@ test.describe('Formulario de platos - ingredientes accesibles', () => {
       expect(box.width).toBeGreaterThanOrEqual(24)
       expect(box.height).toBeGreaterThanOrEqual(24)
     }
+  })
+})
+
+test.describe('Formulario de platos - contraste', () => {
+  const luminance = ([r, g, b]: number[]) => {
+    const [R, G, B] = [r, g, b].map(v => {
+      const c = v / 255
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * R + 0.7152 * G + 0.0722 * B
+  }
+  const ratio = (a: number[], b: number[]) => {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+    return (hi + 0.05) / (lo + 0.05)
+  }
+
+  test('placeholder (4.5:1) y borde de los controles (3:1) cumplen WCAG AA', async ({ page }) => {
+    await openNewDishForm(page)
+    const colors = await page.getByLabel('Nombre del plato').evaluate(el => {
+      const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number)
+      return {
+        placeholder: rgb(getComputedStyle(el, '::placeholder').color),
+        input: rgb(getComputedStyle(el).backgroundColor),
+        border: rgb(getComputedStyle(el).borderTopColor),
+        card: rgb(getComputedStyle(el.closest('.card')!).backgroundColor)
+      }
+    })
+    expect(ratio(colors.placeholder, colors.input)).toBeGreaterThanOrEqual(4.5)
+    expect(ratio(colors.border, colors.card)).toBeGreaterThanOrEqual(3)
   })
 })
 
