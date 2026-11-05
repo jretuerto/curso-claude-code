@@ -1,11 +1,11 @@
 # Accesibilizar el formulario de platos (#11)
 
-- **Tipo**: feature
+- **Tipo**: bugfix
 - **Issue**: #11
 
 ## Objetivo
 
-Hacer accesible el formulario de creación/edición de platos de `web-admin` según WCAG 2.2 nivel AA, para que pueda completarse y enviarse solo con teclado, con orden de tabulación lógico y foco visible. Hoy ya tiene etiquetas `for/id`, `aria-label` en botones de icono y un foco global (`:focus-visible`), pero faltan errores de validación asociados a cada campo, avisos a lectores de pantalla, objetivos táctiles de tamaño suficiente y contraste adecuado.
+Corregir la falta de accesibilidad del formulario de creación/edición de platos de `web-admin` según WCAG 2.2 nivel AA, para que pueda completarse y enviarse solo con teclado, con orden de tabulación lógico y foco visible. Comportamiento actual: ya tiene etiquetas `for/id`, `aria-label` en botones de icono y un foco global (`:focus-visible`), pero faltan errores de validación asociados a cada campo, avisos a lectores de pantalla, objetivos táctiles de tamaño suficiente y contraste adecuado.
 
 ## Alcance
 
@@ -15,7 +15,7 @@ Hacer accesible el formulario de creación/edición de platos de `web-admin` seg
 - Sección de ingredientes: jerarquía de encabezados correcta y mensaje cuando la acción de añadir no se puede realizar.
 - Objetivos táctiles ≥ 24×24 px (WCAG 2.5.8) en el botón de quitar ingrediente.
 - Contraste de texto/placeholder ≥ 4.5:1 (WCAG 1.4.3) y de bordes de controles ≥ 3:1 (WCAG 1.4.11) dentro del formulario.
-- Tests de comportamiento accesible del componente `DishFormComponent`.
+- Tests end-to-end con Playwright (incluido `@axe-core/playwright`) del formulario de platos.
 
 **No incluye**
 - Otros formularios o páginas de `web-admin`, `web-empleados` o `web-clientes`.
@@ -31,27 +31,28 @@ Hacer accesible el formulario de creación/edición de platos de `web-admin` seg
 | `packages/web-admin/src/app/features/dishes/pages/dish-form/dish-form.component.ts` | modificar | Validación por campo, foco al primer error, foco tras quitar ingrediente, mensajes de estado |
 | `packages/web-admin/src/app/features/dishes/pages/dish-form/dish-form.component.css` | modificar | Tamaño mínimo del botón de quitar, estilos de error, contraste |
 | `packages/web-admin/src/styles.css` | modificar (solo si hace falta) | Contraste de `--text-muted`/placeholder y borde de controles; revisar que `.form-control:focus` no quede sin indicador |
-| `packages/web-admin/src/app/features/dishes/pages/dish-form/dish-form.component.spec.ts` | crear | Tests de accesibilidad del componente |
-| `packages/web-admin/package.json` | modificar (si no hay runner de tests) | Hoy solo tiene script `build`; ver dudas |
+| `packages/web-admin/e2e/dish-form.a11y.spec.ts` | crear | Tests Playwright: teclado, errores, avisos y auditoría axe |
+| `packages/web-admin/playwright.config.ts` | crear | Configuración de Playwright (baseURL `http://localhost:4200`, arranque de api y web-admin) |
+| `packages/web-admin/package.json` | modificar | Añadir `@playwright/test`, `@axe-core/playwright` y script `test:e2e` |
 
 ## Tareas
 
 Cada tarea debe poder completarse en 5-10 minutos.
 
-- [ ] 1. Comprobar la configuración de tests de `web-admin` (hoy no hay `*.spec.ts` ni script `test`) y dejar un runner funcionando para un componente standalone zoneless.
-- [ ] 2. Escribir test (rojo) de que cada control tiene nombre accesible (label o `aria-label`) y de que el `<form>` tiene nombre accesible.
-- [ ] 3. Añadir nombre accesible al `<form>` (`aria-labelledby` al `h1`) y `aria-busy` mientras `loading()` es true; ajustar los tests.
-- [ ] 4. Escribir test (rojo) de validación: enviar con nombre vacío o precio inválido muestra mensajes de error, marca `aria-invalid="true"` y enlaza `aria-describedby`.
+- [ ] 1. Instalar Playwright y `@axe-core/playwright` en `web-admin`, crear `playwright.config.ts` (api en 3000 y web-admin en 4200 vía `webServer`) y el script `test:e2e`, con un test de humo que haga login con las credenciales de prueba y abra el formulario.
+- [ ] 2. Escribir test Playwright (rojo) de que cada control tiene nombre accesible (`getByRole` con nombre) y de que el `<form>` tiene nombre accesible; añadir una auditoría axe WCAG 2.2 AA del formulario.
+- [ ] 3. Añadir nombre accesible al `<form>` (`aria-labelledby` al `h1`) y `aria-busy` mientras `loading()` es true; hacer pasar los tests.
+- [ ] 4. Escribir test Playwright (rojo) de validación: enviar con nombre vacío o precio inválido muestra mensajes de error, marca `aria-invalid="true"` y enlaza `aria-describedby`.
 - [ ] 5. Implementar la validación por campo en `dish-form.component.ts` (señal de errores) y los mensajes en el HTML con `id` únicos.
-- [ ] 6. Escribir test (rojo) y implementar que, al fallar la validación, el foco pasa al primer campo inválido y no se envía el formulario.
+- [ ] 6. Escribir test Playwright (rojo) y implementar que, al fallar la validación, el foco pasa al primer campo inválido y no se envía el formulario.
 - [ ] 7. Hacer que el `alert-error` general y los mensajes de estado se anuncien correctamente (`role="alert"` ya existe; añadir región `aria-live="polite"` para "Guardando…"/cargando).
-- [ ] 8. Escribir test (rojo) e implementar: añadir/quitar ingrediente anuncia el cambio en una región `aria-live` y, al quitar, el foco se mueve a un elemento lógico (siguiente chip, o el selector de ingrediente si no quedan).
+- [ ] 8. Escribir test Playwright (rojo) e implementar: añadir/quitar ingrediente anuncia el cambio en una región `aria-live` y, al quitar, el foco se mueve a un elemento lógico (siguiente chip, o el selector de ingrediente si no quedan).
 - [ ] 9. Dar feedback cuando "Añadir ingrediente" no puede ejecutarse (sin ingrediente, cantidad ≤ 0 o duplicado) con un mensaje asociado en lugar de salir en silencio.
 - [ ] 10. Corregir la jerarquía de encabezados (`h1` → `h3` en la sección de ingredientes pasa a `h2`) y verificar el estilo en el CSS.
 - [ ] 11. Aumentar el área del botón `.chip-remove` a ≥ 24×24 px y revisar el espaciado de los botones de la fila de añadir ingrediente.
 - [ ] 12. Medir contraste de placeholder, `--text-muted`, `--text-secondary` y `--border-color` sobre `--bg-input`/`--bg-card`; ajustar tokens afectados para cumplir 4.5:1 (texto) y 3:1 (bordes) sin romper otras pantallas.
 - [ ] 13. Verificación manual con teclado (Tab/Shift+Tab/Enter/Espacio) del flujo completo crear y editar, comprobando foco visible en todos los controles, y con un lector de pantalla o la pestaña Accessibility de DevTools.
-- [ ] 14. Ejecutar los tests, `ng build` de `web-admin` y el formateo/lint que use el proyecto; corregir lo que falle.
+- [ ] 14. Ejecutar `npm run test:e2e`, `ng build` de `web-admin` y el formateo/lint que use el proyecto; corregir lo que falle.
 
 ## Criterios de aceptación
 
@@ -61,14 +62,11 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - [ ] Añadir, quitar o fallar al añadir un ingrediente se comunica a lectores de pantalla mediante una región `aria-live`.
 - [ ] Todos los controles tienen nombre accesible y la jerarquía de encabezados no salta niveles.
 - [ ] Los objetivos interactivos miden al menos 24×24 px y el contraste cumple 4.5:1 (texto) y 3:1 (bordes de controles).
-- [ ] Los tests nuevos pasan y `ng build` de `web-admin` compila sin errores.
+- [ ] Los tests Playwright (incluida la auditoría axe sin violaciones AA) pasan y `ng build` de `web-admin` compila sin errores.
 
 ## Dudas y decisiones tomadas
 
 **Dudas abiertas**
-- El número de issue (#11) lo he deducido de la posición en `scripts/issues.json` (11.ª entrada), no de GitHub. ¿Es correcto?
-- La issue está marcada como `feature`, no como bug, aunque se pidió como "bug de accesibilidad". Se ha mantenido `feature`. ¿Se prefiere `bugfix`?
-- `web-admin` no tiene tests ni script `test`. ¿Se acepta añadir el runner (la tarea 1) o se prefiere limitar la verificación a una revisión manual?
 - ¿Se deben cambiar los tokens de color globales si el contraste falla, aunque afecte a otras pantallas, o limitarlo a estilos del formulario?
 
 **Decisiones asumidas**
@@ -76,3 +74,5 @@ Cada tarea debe poder completarse en 5-10 minutos.
 - Se mantiene el estilo del frontend: componente con `FormsModule` y signals, sin migrar a formularios reactivos, para limitar el alcance.
 - Se usa validación propia con mensajes visibles en vez de la validación nativa del navegador, porque esta no es consistente entre lectores de pantalla.
 - Los estados (cargando/guardado) se anuncian con `aria-live="polite"` y los errores con `role="alert"` (ya existente).
+- Confirmado por el usuario: el número de issue es #11, el tipo es `bugfix` y los tests se harán con Playwright (e2e), no con tests unitarios de componente.
+- Los tests e2e necesitan la base de datos con datos de prueba (`npm run seed`) y las credenciales de prueba del README.
