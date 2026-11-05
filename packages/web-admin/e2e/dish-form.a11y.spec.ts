@@ -307,3 +307,30 @@ test.describe('Formulario de platos - solo teclado', () => {
   })
 })
 
+test.describe('Formulario de platos - auditoría axe en distintos estados', () => {
+  const audit = async (page: import('@playwright/test').Page) => {
+    const results = await new AxeBuilder({ page }).include('app-dish-form').withTags(WCAG_TAGS).analyze()
+    return results.violations.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(' ')).join(' | ')}`)
+  }
+
+  test('con errores de validación visibles', async ({ page }) => {
+    await openNewDishForm(page)
+    await page.getByRole('button', { name: 'Guardar' }).click()
+    await expect(page.getByLabel('Nombre del plato')).toHaveAttribute('aria-invalid', 'true')
+    expect(await audit(page)).toEqual([])
+  })
+
+  test('con ingredientes añadidos y el error de ingrediente visible', async ({ page }) => {
+    await openNewDishForm(page)
+    const select = page.getByRole('combobox', { name: 'Ingrediente a añadir' })
+    await expect(select.locator('option')).not.toHaveCount(1)
+    for (const index of [1, 2]) {
+      await select.selectOption({ index })
+      await page.getByRole('button', { name: 'Añadir ingrediente' }).click()
+    }
+    await page.getByRole('button', { name: 'Añadir ingrediente' }).click() // sin selección: error
+    await expect(page.locator('#ingredient-error')).toBeVisible()
+    expect(await audit(page)).toEqual([])
+  })
+})
+

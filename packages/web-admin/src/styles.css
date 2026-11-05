@@ -18,6 +18,8 @@
   --green-dark: #16a34a;
   --green-glow: rgba(74, 222, 128, 0.15);
   --red: #ef4444;
+  /* Texto de error: >= 4.5:1 sobre las tarjetas (WCAG 1.4.3); --red solo da 4.41:1 */
+  --red-text: #f87171;
   --red-glow: rgba(239, 68, 68, 0.15);
   --yellow: #facc15;
   --radius: 10px;

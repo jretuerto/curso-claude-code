@@ -132,7 +132,7 @@ select.form-control {
 }
 
 .field-error {
-  color: var(--red);
+  color: var(--red-text);
   font-size: 13px;
 }
 
