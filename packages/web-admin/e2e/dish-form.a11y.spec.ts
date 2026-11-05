@@ -198,5 +198,18 @@ test.describe('Formulario de platos - ingredientes accesibles', () => {
     await expect(select).toHaveAccessibleDescription('Este ingrediente ya está añadido.')
     await expect(page.getByRole('list', { name: 'Ingredientes añadidos' }).getByRole('listitem')).toHaveCount(1)
   })
+
+  test('los botones de la sección de ingredientes miden al menos 24x24 px', async ({ page }) => {
+    await addIngredient(page, 1)
+    const targets = [
+      page.getByRole('button', { name: /^Quitar / }),
+      page.getByRole('button', { name: 'Añadir ingrediente' })
+    ]
+    for (const target of targets) {
+      const box = (await target.boundingBox())!
+      expect(box.width).toBeGreaterThanOrEqual(24)
+      expect(box.height).toBeGreaterThanOrEqual(24)
+    }
+  })
 })
 

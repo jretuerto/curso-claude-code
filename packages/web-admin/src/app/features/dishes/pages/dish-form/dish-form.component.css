@@ -75,6 +75,10 @@ textarea.form-control {
   border-radius: 50%;
   transition: all var(--transition);
   display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
 }
 
 .chip-remove:hover {
