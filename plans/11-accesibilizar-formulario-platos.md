@@ -58,10 +58,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
   - [x] 4.1 U-rojo: con nombre vacío o precio vacío/negativo, `onSubmit()` no llama al store, muestra el mensaje, marca `aria-invalid="true"` y enlaza `aria-describedby` al `id` del mensaje.
   - [x] 4.2 Código (hecho en `6d8c057`: `validate()`, señales `nameError`/`priceError`, `novalidate`) y e2e.
   - [x] 4.3 Verde: `ng test`.
-- [ ] 5. Foco al primer campo inválido.
-  - [ ] 5.1 U-rojo: tras un envío inválido, `document.activeElement` es `#dish-name`; si solo falla el precio, `#dish-price`.
+- [x] 5. Foco al primer campo inválido.
+  - [x] 5.1 U-rojo: tras un envío inválido, `document.activeElement` es `#dish-name`; si solo falla el precio, `#dish-price`.
   - [x] 5.2 Código (hecho en `869dd16`: `focusField()`) y e2e.
-  - [ ] 5.3 Verde: `ng test`.
+  - [x] 5.3 Verde: `ng test`.
 - [ ] 6. Región de estado «Cargando/Guardando».
   - [ ] 6.1 U-rojo: existe un elemento `role="status"` con `aria-live="polite"` vacío al inicio, que contiene «Guardando el plato…» durante el guardado y «Cargando el plato…» al editar.
   - [x] 6.2 Código (hecho en `b0622f8`: región `.sr-only`) y e2e.

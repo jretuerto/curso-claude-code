@@ -134,5 +134,35 @@ describe('DishFormComponent', () => {
       expect(query('.field-error')).toBeNull()
     })
   })
+
+  describe('foco al primer campo inválido', () => {
+    it('con nombre vacío el foco va al nombre', async () => {
+      const { component, settle } = await setup()
+      component.form.name = ''
+      component.form.price = -1
+      await component.onSubmit()
+      await settle()
+      expect(document.activeElement?.id).toBe('dish-name')
+    })
+
+    it('si solo falla el precio el foco va al precio', async () => {
+      const { component, settle } = await setup()
+      component.form.name = 'Tortilla'
+      component.form.price = -1
+      await component.onSubmit()
+      await settle()
+      expect(document.activeElement?.id).toBe('dish-price')
+    })
+
+    it('con datos válidos no se mueve el foco a ningún campo', async () => {
+      const { component, settle } = await setup()
+      component.form.name = 'Tortilla'
+      component.form.price = 3
+      await component.onSubmit()
+      await settle()
+      expect(document.activeElement?.id).not.toBe('dish-name')
+      expect(document.activeElement?.id).not.toBe('dish-price')
+    })
+  })
 })
 
