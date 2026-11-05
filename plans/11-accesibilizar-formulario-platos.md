@@ -50,10 +50,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
 - [x] 2. Configurar Vitest unitario en Angular.
   - [x] 2.1 Añadir `vitest` y `jsdom` a `web-admin`, el target `test` (`@angular/build:unit-test`, runner `vitest`) en `angular.json` y el script `test`.
   - [x] 2.2 Test unitario de humo: `DishFormComponent` se crea con `TestBed` (providers falsos de `DishStore`, `DishService`, `IngredientStore`, `ActivatedRoute` y `Router`) y muestra el título «Nuevo plato».
-- [ ] 3. Nombre accesible del formulario y `aria-busy`.
-  - [ ] 3.1 U-rojo: el `<form>` tiene `aria-labelledby` apuntando al `h1`, y `aria-busy` es `"true"` mientras `loading()` es true.
+- [x] 3. Nombre accesible del formulario y `aria-busy`.
+  - [x] 3.1 U-rojo: el `<form>` tiene `aria-labelledby` apuntando al `h1`, y `aria-busy` es `"true"` mientras `loading()` es true.
   - [x] 3.2 Código (hecho en `6fc9e78`: `aria-labelledby` y `[attr.aria-busy]`) y e2e con axe de nombres accesibles.
-  - [ ] 3.3 Verde: `ng test` y `ng build`.
+  - [x] 3.3 Verde: `ng test` y `ng build`.
 - [ ] 4. Validación por campo de nombre y precio.
   - [ ] 4.1 U-rojo: con nombre vacío o precio vacío/negativo, `onSubmit()` no llama al store, muestra el mensaje, marca `aria-invalid="true"` y enlaza `aria-describedby` al `id` del mensaje.
   - [x] 4.2 Código (hecho en `6d8c057`: `validate()`, señales `nameError`/`priceError`, `novalidate`) y e2e.
