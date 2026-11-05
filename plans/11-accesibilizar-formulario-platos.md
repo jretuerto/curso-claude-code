@@ -81,10 +81,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
 - [x] 10. Objetivos táctiles ≥ 24×24 px del botón de quitar (hecho en `31984db`). Sin test unitario: jsdom no calcula maquetación; se verifica con el e2e de Playwright (`boundingBox`).
 - [x] 11. Contraste de placeholder y bordes (hecho en `6ef09e4`, global en `styles.css`). Sin test unitario: jsdom no resuelve estilos de hojas CSS externas; se verifica con el e2e de ratios y con axe `color-contrast`.
 - [x] 12. Auditoría axe del formulario con el plugin `@axe-core/playwright`: ejecutar WCAG 2.2 AA (`wcag2a`, `wcag2aa`, `wcag21aa`, `wcag22aa`) sobre `app-dish-form` en estado inicial, con errores de validación visibles y con ingredientes añadidos; 0 violaciones.
-- [ ] 13. Vídeo del flujo solo con teclado.
-  - [ ] 13.1 Escribir `e2e/dish-form.video.spec.ts` con grabación de vídeo activada: login con teclado, ir al listado de platos y abrir «Nuevo plato» con Tab/Enter, rellenar nombre, precio, categoría y descripción, añadir y quitar algún ingrediente.
-  - [ ] 13.2 Ampliar el flujo: enviar el formulario incompleto para mostrar los errores, corregirlo, crear bien el plato y comprobar que aparece en el listado; borrar el plato creado al terminar (limpieza vía API).
-  - [ ] 13.3 Ajustar `playwright.config.ts`/`saveAs` para guardar el vídeo como `packages/web-admin/e2e-videos/dish-form-teclado.webm`, con pausas legibles (`pressSequentially` con retardo) y sin usar el ratón; ajustar `.gitignore`.
+- [x] 13. Vídeo del flujo solo con teclado.
+  - [x] 13.1 Escribir `e2e/dish-form.video.spec.ts` con grabación de vídeo activada: login con teclado, ir al listado de platos y abrir «Nuevo plato» con Tab/Enter, rellenar nombre, precio, categoría y descripción, añadir y quitar algún ingrediente.
+  - [x] 13.2 Ampliar el flujo: enviar el formulario incompleto para mostrar los errores, corregirlo, crear bien el plato y comprobar que aparece en el listado; borrar el plato creado al terminar (limpieza vía API).
+  - [x] 13.3 Ajustar `playwright.config.ts`/`saveAs` para guardar el vídeo como `packages/web-admin/e2e-videos/dish-form-teclado.webm`, con pausas legibles (`pressSequentially` con retardo) y sin usar el ratón; ajustar `.gitignore`.
 - [ ] 14. Cierre: ejecutar `ng test` (Vitest), `npm run test:e2e`, `ng build` de `web-admin` y `npm test` de la API; comprobar que el vídeo existe y reproduce el flujo completo.
 
 ## Criterios de aceptación
@@ -98,7 +98,7 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
 - [x] Los tests unitarios de Vitest (`ng test`) cubren cada tarea con comportamiento y pasan.
 - [x] Los tests e2e de Playwright pasan y `ng build` de `web-admin` compila sin errores.
 - [x] La auditoría axe (`@axe-core/playwright`, WCAG 2.2 AA) no devuelve violaciones en el formulario, también con errores visibles y con ingredientes añadidos.
-- [ ] Existe `packages/web-admin/e2e-videos/dish-form-teclado.webm`, grabado con Playwright, que muestra solo con teclado cómo se navega el formulario, se modifican datos, se añaden y quitan ingredientes, se envía incompleto para mostrar los errores y finalmente se crea bien el plato y se ve en el listado.
+- [x] Existe `packages/web-admin/e2e-videos/dish-form-teclado.webm`, grabado con Playwright, que muestra solo con teclado cómo se navega el formulario, se modifican datos, se añaden y quitan ingredientes, se envía incompleto para mostrar los errores y finalmente se crea bien el plato y se ve en el listado.
 
 ## Dudas y decisiones tomadas
 
