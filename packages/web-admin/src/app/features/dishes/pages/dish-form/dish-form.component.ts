@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, signal } from '@angular/core'
+import { afterNextRender, Component, ElementRef, inject, Injector, OnInit, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { LucideAngularModule } from 'lucide-angular'
@@ -22,6 +22,7 @@ export class DishFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef)
+  private readonly injector = inject(Injector)
 
   isEditing = false
   dishId: string | null = null
@@ -30,6 +31,7 @@ export class DishFormComponent implements OnInit {
   error = signal<string | null>(null)
   nameError = signal<string | null>(null)
   priceError = signal<string | null>(null)
+  announcement = signal('')
 
   categories: DishCategory[] = ['entrante', 'principal', 'postre', 'bebida']
 
@@ -106,12 +108,24 @@ export class DishFormComponent implements OnInit {
       ...this.form.ingredients,
       { ingredientId: this.newIngredientId, quantity: this.newIngredientQty }
     ]
+    this.announcement.set(`${this.getIngredientName(this.newIngredientId)} añadido.`)
     this.newIngredientId = ''
     this.newIngredientQty = 1
   }
 
   removeIngredient(ingredientId: string): void {
+    const index = this.form.ingredients.findIndex(i => i.ingredientId === ingredientId)
+    const name = this.getIngredientName(ingredientId)
     this.form.ingredients = this.form.ingredients.filter(i => i.ingredientId !== ingredientId)
+    this.announcement.set(`${name} quitado.`)
+
+    // El foco no debe perderse al desaparecer el botón: pasa al chip que ocupa su lugar
+    // o, si no quedan chips, al selector de ingrediente
+    const next = this.form.ingredients[Math.min(index, this.form.ingredients.length - 1)]
+    afterNextRender(
+      () => this.focusField(next ? `remove-ingredient-${next.ingredientId}` : 'new-ingredient'),
+      { injector: this.injector }
+    )
   }
 
   getIngredientName(ingredientId: string): string {

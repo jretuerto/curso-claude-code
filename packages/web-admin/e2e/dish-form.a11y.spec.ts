@@ -127,3 +127,41 @@ test.describe('Formulario de platos - validación accesible', () => {
     await expect(page.getByLabel('Precio (€)')).toBeFocused()
   })
 })
+
+test.describe('Formulario de platos - ingredientes accesibles', () => {
+  test.beforeEach(async ({ page }) => {
+    await openNewDishForm(page)
+  })
+
+  async function addIngredient(page: import('@playwright/test').Page, index: number): Promise<string> {
+    const select = page.getByRole('combobox', { name: 'Ingrediente a añadir' })
+    await expect(select.locator('option')).not.toHaveCount(1)
+    const label = (await select.locator('option').nth(index).textContent())!.trim()
+    await select.selectOption({ index })
+    await page.getByRole('spinbutton', { name: 'Cantidad del ingrediente' }).fill('2')
+    await page.getByRole('button', { name: 'Añadir ingrediente' }).click()
+    return label
+  }
+
+  test('añadir un ingrediente lo anuncia en la región de estado', async ({ page }) => {
+    const label = await addIngredient(page, 1)
+    await expect(page.locator('app-dish-form').getByRole('status')).toHaveText(`${label} añadido.`)
+    await expect(page.getByRole('list', { name: 'Ingredientes añadidos' }).getByRole('listitem')).toHaveCount(1)
+  })
+
+  test('quitar un ingrediente lo anuncia y mueve el foco de forma lógica', async ({ page }) => {
+    const first = await addIngredient(page, 1)
+    await addIngredient(page, 2)
+    const status = page.locator('app-dish-form').getByRole('status')
+
+    // Quitar el primero: el foco pasa al botón de quitar del que ocupa su lugar
+    await page.getByRole('button', { name: new RegExp(`^Quitar ${first.replace(/[()]/g, '\\$&')}`) }).click()
+    await expect(status).toHaveText(`${first} quitado.`)
+    await expect(page.getByRole('button', { name: /^Quitar / })).toBeFocused()
+
+    // Quitar el último: no quedan chips, el foco vuelve al selector de ingrediente
+    await page.getByRole('button', { name: /^Quitar / }).click()
+    await expect(page.getByRole('combobox', { name: 'Ingrediente a añadir' })).toBeFocused()
+  })
+})
+
