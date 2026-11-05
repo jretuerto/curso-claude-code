@@ -54,10 +54,10 @@ Cada tarea debe poder completarse en 5-10 minutos. Las tareas con comportamiento
   - [x] 3.1 U-rojo: el `<form>` tiene `aria-labelledby` apuntando al `h1`, y `aria-busy` es `"true"` mientras `loading()` es true.
   - [x] 3.2 Código (hecho en `6fc9e78`: `aria-labelledby` y `[attr.aria-busy]`) y e2e con axe de nombres accesibles.
   - [x] 3.3 Verde: `ng test` y `ng build`.
-- [ ] 4. Validación por campo de nombre y precio.
-  - [ ] 4.1 U-rojo: con nombre vacío o precio vacío/negativo, `onSubmit()` no llama al store, muestra el mensaje, marca `aria-invalid="true"` y enlaza `aria-describedby` al `id` del mensaje.
+- [x] 4. Validación por campo de nombre y precio.
+  - [x] 4.1 U-rojo: con nombre vacío o precio vacío/negativo, `onSubmit()` no llama al store, muestra el mensaje, marca `aria-invalid="true"` y enlaza `aria-describedby` al `id` del mensaje.
   - [x] 4.2 Código (hecho en `6d8c057`: `validate()`, señales `nameError`/`priceError`, `novalidate`) y e2e.
-  - [ ] 4.3 Verde: `ng test`.
+  - [x] 4.3 Verde: `ng test`.
 - [ ] 5. Foco al primer campo inválido.
   - [ ] 5.1 U-rojo: tras un envío inválido, `document.activeElement` es `#dish-name`; si solo falla el precio, `#dish-price`.
   - [x] 5.2 Código (hecho en `869dd16`: `focusField()`) y e2e.

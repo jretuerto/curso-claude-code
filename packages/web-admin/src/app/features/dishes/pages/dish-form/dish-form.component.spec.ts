@@ -90,5 +90,49 @@ describe('DishFormComponent', () => {
       expect(query('form').getAttribute('aria-busy')).toBe('true')
     })
   })
+
+  describe('validación de nombre y precio', () => {
+    it('con nombre vacío no guarda y enlaza el error al campo', async () => {
+      const { query, component, dishStore, settle } = await setup()
+      component.form.name = '   '
+      component.form.price = 5
+      await component.onSubmit()
+      await settle()
+
+      const input = query('#dish-name')
+      expect(dishStore.create).not.toHaveBeenCalled()
+      expect(input.getAttribute('aria-invalid')).toBe('true')
+      expect(input.getAttribute('aria-describedby')).toBe('dish-name-error')
+      expect(query('#dish-name-error').textContent?.trim()).toBe('El nombre es obligatorio.')
+      expect(query('#dish-price').getAttribute('aria-invalid')).toBeNull()
+    })
+
+    it.each([[null], [-3]])('con precio %s no guarda y enlaza el error al campo', async price => {
+      const { query, component, dishStore, settle } = await setup()
+      component.form.name = 'Tortilla'
+      component.form.price = price as unknown as number
+      await component.onSubmit()
+      await settle()
+
+      const input = query('#dish-price')
+      expect(dishStore.create).not.toHaveBeenCalled()
+      expect(input.getAttribute('aria-invalid')).toBe('true')
+      expect(input.getAttribute('aria-describedby')).toBe('dish-price-error')
+      expect(query('#dish-price-error').textContent?.trim()).toBe('Introduce un precio igual o mayor que 0.')
+    })
+
+    it('con datos válidos guarda, no muestra errores y vuelve al listado', async () => {
+      const { query, component, dishStore, navigate, settle } = await setup()
+      component.form.name = 'Tortilla'
+      component.form.price = 0
+      await component.onSubmit()
+      await settle()
+
+      expect(dishStore.create).toHaveBeenCalledWith('rest-1', component.form)
+      expect(navigate).toHaveBeenCalledWith(['/restaurants', 'rest-1', 'dishes'])
+      expect(query('#dish-name').getAttribute('aria-invalid')).toBeNull()
+      expect(query('.field-error')).toBeNull()
+    })
+  })
 })
 
