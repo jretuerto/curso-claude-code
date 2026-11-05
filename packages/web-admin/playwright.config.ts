@@ -12,7 +12,8 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: [
     {
-      command: 'npm run seed -w @resttek/api && npm run dev -w @resttek/api',
+      // No se ejecuta el seed aquí: duplica los platos en cada arranque. Ejecuta `npm run seed` una vez antes.
+      command: 'npm run dev -w @resttek/api',
       cwd: '../..',
       url: 'http://localhost:3000/health',
       reuseExistingServer: true,
