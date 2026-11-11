@@ -35,6 +35,10 @@ Si falta el número de issue, pregúntalo al usuario antes de continuar. Si la d
    - Crea la carpeta `plans/` si no existe.
    - Si el fichero ya existe, no lo sobrescribas sin preguntar al usuario.
 6. **Resume** al usuario en pocas líneas: ruta del fichero creado, número de tareas y las dudas/decisiones que requieren su confirmación.
+7. **Avisa por Slack**: envía un mensaje al canal `curso-claude-ed3` indicando que ya se ha planificado la tarea (número de issue, descripción breve y ruta del plan, p. ej. "📝 Planificada la issue #42: paginar vendehumos (`plans/42-paginar-vendehumos.md`)").
+   - Carga las herramientas de Slack si hace falta (`mcp__slack__slack_list_channels` y `mcp__slack__slack_post_message`), busca el id del canal por su nombre y publica con `slack_post_message`.
+   - Si el canal no existe o el envío falla, no reintentes en bucle: avisa al usuario en el resumen.
+   - No incluyas en el mensaje datos personales ni contenido sensible; solo issue, descripción y ruta del plan.
 
 ## Restricciones
 

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { afterNextRender, Component, ElementRef, inject, Injector, OnInit, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router, RouterLink } from '@angular/router'
 import { LucideAngularModule } from 'lucide-angular'
@@ -21,12 +21,18 @@ export class DishFormComponent implements OnInit {
   readonly ingredientStore = inject(IngredientStore)
   private readonly route = inject(ActivatedRoute)
   private readonly router = inject(Router)
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef)
+  private readonly injector = inject(Injector)
 
   isEditing = false
   dishId: string | null = null
   restaurantId: string = ''
   loading = signal(false)
   error = signal<string | null>(null)
+  nameError = signal<string | null>(null)
+  priceError = signal<string | null>(null)
+  announcement = signal('')
+  ingredientError = signal<{ field: 'select' | 'qty'; message: string } | null>(null)
 
   categories: DishCategory[] = ['entrante', 'principal', 'postre', 'bebida']
 
@@ -95,20 +101,41 @@ export class DishFormComponent implements OnInit {
   }
 
   addIngredient(): void {
-    if (!this.newIngredientId || this.newIngredientQty <= 0) return
+    if (!this.newIngredientId) return this.rejectIngredient('select', 'new-ingredient', 'Selecciona un ingrediente.')
+    if (!(this.newIngredientQty > 0)) {
+      return this.rejectIngredient('qty', 'new-ingredient-qty', 'La cantidad debe ser mayor que 0.')
+    }
     const exists = this.form.ingredients.find(i => i.ingredientId === this.newIngredientId)
-    if (exists) return
+    if (exists) return this.rejectIngredient('select', 'new-ingredient', 'Este ingrediente ya está añadido.')
+    this.ingredientError.set(null)
 
     this.form.ingredients = [
       ...this.form.ingredients,
       { ingredientId: this.newIngredientId, quantity: this.newIngredientQty }
     ]
+    this.announcement.set(`${this.getIngredientName(this.newIngredientId)} añadido.`)
     this.newIngredientId = ''
     this.newIngredientQty = 1
   }
 
+  private rejectIngredient(field: 'select' | 'qty', focusId: string, message: string): void {
+    this.ingredientError.set({ field, message })
+    this.focusField(focusId)
+  }
+
   removeIngredient(ingredientId: string): void {
+    const index = this.form.ingredients.findIndex(i => i.ingredientId === ingredientId)
+    const name = this.getIngredientName(ingredientId)
     this.form.ingredients = this.form.ingredients.filter(i => i.ingredientId !== ingredientId)
+    this.announcement.set(`${name} quitado.`)
+
+    // El foco no debe perderse al desaparecer el botón: pasa al chip que ocupa su lugar
+    // o, si no quedan chips, al selector de ingrediente
+    const next = this.form.ingredients[Math.min(index, this.form.ingredients.length - 1)]
+    afterNextRender(
+      () => this.focusField(next ? `remove-ingredient-${next.ingredientId}` : 'new-ingredient'),
+      { injector: this.injector }
+    )
   }
 
   getIngredientName(ingredientId: string): string {
@@ -116,8 +143,24 @@ export class DishFormComponent implements OnInit {
     return ingredient ? `${ingredient.name} (${ingredient.unit})` : ingredientId
   }
 
+  private validate(): boolean {
+    const nameValid = (this.form.name ?? '').trim().length > 0
+    const price = this.form.price as number | null
+    const priceValid = typeof price === 'number' && Number.isFinite(price) && price >= 0
+    this.nameError.set(nameValid ? null : 'El nombre es obligatorio.')
+    this.priceError.set(priceValid ? null : 'Introduce un precio igual o mayor que 0.')
+    if (!nameValid) this.focusField('dish-name')
+    else if (!priceValid) this.focusField('dish-price')
+    return nameValid && priceValid
+  }
+
+  private focusField(id: string): void {
+    this.host.nativeElement.querySelector<HTMLElement>(`#${id}`)?.focus()
+  }
+
   async onSubmit(): Promise<void> {
     this.error.set(null)
+    if (!this.validate()) return
     this.loading.set(true)
     try {
       if (this.isEditing && this.dishId) {
