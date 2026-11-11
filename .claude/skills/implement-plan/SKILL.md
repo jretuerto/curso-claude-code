@@ -55,6 +55,15 @@ Reglas del TDD estricto:
 - Revisa los **criterios de aceptación** del plan: marca `- [x]` los que se hayan verificado y, si alguno no se cumple, indícalo. Si cambias el plan en este paso, hazlo en un último commit con `/commit`.
 - Resume al usuario: rama creada, tareas completadas, commits realizados, criterios no cumplidos y dudas pendientes.
 
+### 5. Avisa por Slack
+
+Como último paso, envía un mensaje al canal `curso-claude-ed3` (id `C0CGZ01R9M2`) indicando que ya se ha implementado el plan (nombre del plan, rama, número de tareas completadas y criterios pendientes si los hay), p. ej. "✅ Implementado el plan `1-login-registro-usuarios` en la rama `1-login-registro-usuarios` (8/8 tareas)".
+
+- Carga la herramienta de Slack si hace falta (`mcp__slack__slack_post_message`) y publica directamente con `slack_post_message` usando `channel_id` = `C0CGZ01R9M2`; no hace falta buscar el canal.
+- Si el plan no se ha completado (tareas pendientes o criterios sin cumplir), indícalo en el mensaje en lugar de decir que está terminado.
+- Si el envío falla, no reintentes en bucle: avisa al usuario.
+- No incluyas en el mensaje datos personales ni contenido sensible.
+
 ## Restricciones
 
 - No implementes nada fuera de las tareas del plan.
