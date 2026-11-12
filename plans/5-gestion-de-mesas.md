@@ -78,33 +78,33 @@ Introducir la entidad **Mesa** en Resttek para que: el administrador gestione (C
 Cada tarea debe poder completarse en 5-10 minutos. En la API se sigue TDD (test en rojo → código → verde con `npm test`).
 
 **API**
-- [ ] 1. Crear `table.model.ts` con `RestaurantTable` y `normalizeTableStatus()`, más los errores de dominio nuevos; tests de `normalizeTableStatus` (válidos, mayúsculas/espacios, inválido, vacío).
-- [ ] 2. Añadir la tabla `restaurant_tables` en `runInitialMigrations()` y registrar los errores en `errorHandler` (404 y nueva lista 409).
-- [ ] 3. Repositorio: interfaz `TableRepository` y `SqliteTableRepository` con `findById`, `findByRestaurantId`, `findByNumber`, `save`, `delete`; tests contra `:memory:`.
-- [ ] 4. Repositorio: `findAvailable(restaurantId, people)`, `updateStatus(id, status)` y `occupyIfFree(id)` (devuelve si se ocupó según `changes`); tests, incluido que una segunda ocupación devuelve `false`.
-- [ ] 5. `MockTableRepository` y `TableService.create/update` con validaciones (número/capacidad enteros > 0, número único por restaurante, estado por defecto `libre`); tests.
-- [ ] 6. `TableService.delete`, `findById`, `findByRestaurantId`, `updateStatus`, `findAvailable` (valida `people` entero > 0) y `occupy` (lanza `TableNotAvailableError` si no estaba libre, `TableNotFoundError` si no existe o es de otro restaurante); tests.
-- [ ] 7. `TableController` y `table.routes.ts` con los roles del alcance (declarando `/available` antes de `/:id`); montar en `app.ts`.
-- [ ] 8. Seed: 4-6 mesas por restaurante con capacidades variadas e `INSERT OR IGNORE` con ids fijos; el pedido de ejemplo usa el id de una mesa y esa mesa queda `ocupada`. Comprobar `npm run seed` y los endpoints con `curl`.
+- [x] 1. Crear `table.model.ts` con `RestaurantTable` y `normalizeTableStatus()`, más los errores de dominio nuevos; tests de `normalizeTableStatus` (válidos, mayúsculas/espacios, inválido, vacío).
+- [x] 2. Añadir la tabla `restaurant_tables` en `runInitialMigrations()` y registrar los errores en `errorHandler` (404 y nueva lista 409).
+- [x] 3. Repositorio: interfaz `TableRepository` y `SqliteTableRepository` con `findById`, `findByRestaurantId`, `findByNumber`, `save`, `delete`; tests contra `:memory:`.
+- [x] 4. Repositorio: `findAvailable(restaurantId, people)`, `updateStatus(id, status)` y `occupyIfFree(id)` (devuelve si se ocupó según `changes`); tests, incluido que una segunda ocupación devuelve `false`.
+- [x] 5. `MockTableRepository` y `TableService.create/update` con validaciones (número/capacidad enteros > 0, número único por restaurante, estado por defecto `libre`); tests.
+- [x] 6. `TableService.delete`, `findById`, `findByRestaurantId`, `updateStatus`, `findAvailable` (valida `people` entero > 0) y `occupy` (lanza `TableNotAvailableError` si no estaba libre, `TableNotFoundError` si no existe o es de otro restaurante); tests.
+- [x] 7. `TableController` y `table.routes.ts` con los roles del alcance (declarando `/available` antes de `/:id`); montar en `app.ts`.
+- [x] 8. Seed: 4-6 mesas por restaurante con capacidades variadas e `INSERT OR IGNORE` con ids fijos; el pedido de ejemplo usa el id de una mesa y esa mesa queda `ocupada`. Comprobar `npm run seed` y los endpoints con `curl`.
 
 **web-admin**
-- [ ] 9. Modelo, `TableService` y `TableStore` (`loadByRestaurant`, `create`, `update`, `delete`) siguiendo `IngredientStore`; `table.store.spec.ts` con el servicio falso.
-- [ ] 10. `TableListComponent` (número, descripción, capacidad, estado, editar/eliminar) y `tables.routes.ts`.
-- [ ] 11. `TableFormComponent` (alta/edición con número, descripción, capacidad y estado) con mensajes de error de la API.
-- [ ] 12. Ruta en `app.routes.ts`, enlace en el menú lateral y tarjeta en el dashboard; `ng test` y `ng build`.
+- [x] 9. Modelo, `TableService` y `TableStore` (`loadByRestaurant`, `create`, `update`, `delete`) siguiendo `IngredientStore`; `table.store.spec.ts` con el servicio falso.
+- [x] 10. `TableListComponent` (número, descripción, capacidad, estado, editar/eliminar) y `tables.routes.ts`.
+- [x] 11. `TableFormComponent` (alta/edición con número, descripción, capacidad y estado) con mensajes de error de la API.
+- [x] 12. Ruta en `app.routes.ts`, enlace en el menú lateral y tarjeta en el dashboard; `ng test` y `ng build`.
 
 **web-clientes**
-- [ ] 13. Modelo y `TableService` (`getAvailable(restaurantId, people)`, `occupy(restaurantId, tableId)`); `CartStore` con `tableId` (`setTable`, se resetea en `clear` y al cambiar de restaurante).
-- [ ] 14. `TableSelectionComponent`: campo de personas, listado de mesas disponibles, selección y botón «Continuar» que ocupa la mesa, guarda el `tableId` y navega a `/restaurants/:id`; mensaje si no hay mesas o si la mesa se ocupó entretanto (409).
-- [ ] 15. Ruta `restaurants/:id/tables`, enlace desde `restaurant-list` y envío del `tableId` en `OrderService.createOrder` / `CartComponent.confirmOrder`; `ng build`.
+- [x] 13. Modelo y `TableService` (`getAvailable(restaurantId, people)`, `occupy(restaurantId, tableId)`); `CartStore` con `tableId` (`setTable`, se resetea en `clear` y al cambiar de restaurante).
+- [x] 14. `TableSelectionComponent`: campo de personas, listado de mesas disponibles, selección y botón «Continuar» que ocupa la mesa, guarda el `tableId` y navega a `/restaurants/:id`; mensaje si no hay mesas o si la mesa se ocupó entretanto (409).
+- [x] 15. Ruta `restaurants/:id/tables`, enlace desde `restaurant-list` y envío del `tableId` en `OrderService.createOrder` / `CartComponent.confirmOrder`; `ng build`.
 
 **web-empleados**
-- [ ] 16. Modelo, `TableService` (`getAll`, `updateStatus`) y `TableStore` con *polling* (como `OrderStore`).
-- [ ] 17. `MesasComponent`: tarjetas por mesa con estado y selector para cambiarlo; en las ocupadas, sus pedidos activos (de `OrderStore`, agrupados por `tableId`) con el estado de cada ítem.
-- [ ] 18. Ruta `mesas` y enlace «Mesas» en el menú para todos los roles de empleado; `ng build`.
+- [x] 16. Modelo, `TableService` (`getAll`, `updateStatus`) y `TableStore` con *polling* (como `OrderStore`).
+- [x] 17. `MesasComponent`: tarjetas por mesa con estado y selector para cambiarlo; en las ocupadas, sus pedidos activos (de `OrderStore`, agrupados por `tableId`) con el estado de cada ítem.
+- [x] 18. Ruta `mesas` y enlace «Mesas» en el menú para todos los roles de empleado; `ng build`.
 
 **Cierre**
-- [ ] 19. Actualizar `modelo-datos.md` y `glosario.md`.
+- [x] 19. Actualizar `modelo-datos.md` y `glosario.md`.
 - [ ] 20. Verificación final: `npm test`, `ng build` de los tres frontends y prueba manual del flujo completo (admin crea mesa → cliente la ocupa y pide → empleado la ve ocupada con su pedido y la libera).
 
 ## Criterios de aceptación
