@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core'
+import { Component, inject, OnInit, signal } from '@angular/core'
 import { Router, RouterLink } from '@angular/router'
 import { DecimalPipe } from '@angular/common'
 import { CartStore } from '../../core/store/cart.store'
@@ -168,13 +168,20 @@ import { OrderService } from '../../core/services/order.service'
     }
   `]
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
   readonly cartStore = inject(CartStore)
   private readonly orderService = inject(OrderService)
   private readonly router = inject(Router)
 
   readonly loading = signal(false)
   readonly error = signal<string | null>(null)
+
+  ngOnInit(): void {
+    const restaurantId = this.cartStore.restaurantId()
+    if (restaurantId && !this.cartStore.tableIdFor(restaurantId)) {
+      this.router.navigate(['/restaurants', restaurantId, 'tables'], { replaceUrl: true })
+    }
+  }
 
   increment(dishId: string): void {
     const item = this.cartStore.items().find(i => i.dish.id === dishId)
@@ -198,6 +205,12 @@ export class CartComponent {
     const restaurantId = this.cartStore.restaurantId()
     if (!restaurantId || this.cartStore.items().length === 0) return
 
+    const tableId = this.cartStore.tableIdFor(restaurantId)
+    if (!tableId) {
+      this.router.navigate(['/restaurants', restaurantId, 'tables'])
+      return
+    }
+
     this.loading.set(true)
     this.error.set(null)
 
@@ -207,7 +220,7 @@ export class CartComponent {
       notes: item.notes || null
     }))
 
-    this.orderService.createOrder(restaurantId, items).subscribe({
+    this.orderService.createOrder(restaurantId, tableId, items).subscribe({
       next: (order) => {
         this.cartStore.clear()
         this.router.navigate(['/orders', order.id])
