@@ -5,7 +5,9 @@ import {
     InvalidTableNumberError,
     InvalidCapacityError,
     DuplicatedTableNumberError,
-    TableNotFoundError
+    TableNotFoundError,
+    TableNotAvailableError,
+    InvalidPeopleCountError
 } from '@errors/DomainErrors.js'
 import { TableService } from './table.service.js'
 import { MockTableRepository } from '@repositories/mocks/MockTableRepository.js'
@@ -141,6 +143,118 @@ describe('TableService', () => {
         it('should throw TableNotFoundError when the table belongs to another restaurant', async () => {
             const created = await service.create(validInput)
             await expect(service.update('r2', created.id, { number: 1, capacity: 4 })).rejects.toThrow(TableNotFoundError)
+        })
+    })
+
+    describe('findById', () => {
+        it('should return the table of the restaurant', async () => {
+            const created = await service.create(validInput)
+            expect(await service.findById('r1', created.id)).toEqual(created)
+        })
+
+        it('should throw TableNotFoundError when missing or from another restaurant', async () => {
+            const created = await service.create(validInput)
+            await expect(service.findById('r1', 'nope')).rejects.toThrow(TableNotFoundError)
+            await expect(service.findById('r2', created.id)).rejects.toThrow(TableNotFoundError)
+        })
+    })
+
+    describe('findByRestaurantId', () => {
+        it('should return only the tables of the restaurant ordered by number', async () => {
+            await service.create({ ...validInput, number: 3 })
+            await service.create({ ...validInput, number: 1 })
+            await service.create({ ...validInput, restaurantId: 'r2', number: 2 })
+
+            const result = await service.findByRestaurantId('r1')
+            expect(result.map(t => t.number)).toEqual([1, 3])
+        })
+
+        it('should return an empty list for a restaurant without tables', async () => {
+            expect(await service.findByRestaurantId('unknown')).toEqual([])
+        })
+    })
+
+    describe('delete', () => {
+        it('should delete a table in any status', async () => {
+            const created = await service.create({ ...validInput, status: 'ocupada' })
+            await service.delete('r1', created.id)
+            expect(await repo.findById(created.id)).toBeNull()
+        })
+
+        it('should throw TableNotFoundError when missing or from another restaurant', async () => {
+            const created = await service.create(validInput)
+            await expect(service.delete('r1', 'nope')).rejects.toThrow(TableNotFoundError)
+            await expect(service.delete('r2', created.id)).rejects.toThrow(TableNotFoundError)
+            expect(await repo.findById(created.id)).not.toBeNull()
+        })
+    })
+
+    describe('updateStatus', () => {
+        it('should change the status and return the updated table', async () => {
+            const created = await service.create({ ...validInput, status: 'ocupada' })
+            const updated = await service.updateStatus('r1', created.id, ' LIBRE ')
+            expect(updated.status).toBe('libre')
+            expect((await repo.findById(created.id))?.status).toBe('libre')
+        })
+
+        it('should throw InvalidTableStatusError for an invalid or missing status', async () => {
+            const created = await service.create(validInput)
+            await expect(service.updateStatus('r1', created.id, 'cerrada')).rejects.toThrow(InvalidTableStatusError)
+            await expect(service.updateStatus('r1', created.id, undefined as unknown as string)).rejects.toThrow(InvalidTableStatusError)
+        })
+
+        it('should throw TableNotFoundError when missing or from another restaurant', async () => {
+            const created = await service.create(validInput)
+            await expect(service.updateStatus('r1', 'nope', 'libre')).rejects.toThrow(TableNotFoundError)
+            await expect(service.updateStatus('r2', created.id, 'libre')).rejects.toThrow(TableNotFoundError)
+        })
+    })
+
+    describe('findAvailable', () => {
+        beforeEach(async () => {
+            await service.create({ ...validInput, number: 1, capacity: 6 })
+            await service.create({ ...validInput, number: 2, capacity: 2 })
+            await service.create({ ...validInput, number: 3, capacity: 4 })
+            await service.create({ ...validInput, number: 4, capacity: 8, status: 'ocupada' })
+        })
+
+        it('should return free tables with enough capacity ordered by capacity', async () => {
+            const result = await service.findAvailable('r1', 3)
+            expect(result.map(t => t.number)).toEqual([3, 1])
+        })
+
+        it('should accept people as a numeric string (query param)', async () => {
+            const result = await service.findAvailable('r1', '4')
+            expect(result.map(t => t.number)).toEqual([3, 1])
+        })
+
+        it.each([0, -1, 2.5, '0', '2.5', 'abc', '', ' ', '4abc', null, undefined])('should throw InvalidPeopleCountError for people %s', async (people) => {
+            await expect(service.findAvailable('r1', people)).rejects.toThrow(InvalidPeopleCountError)
+        })
+    })
+
+    describe('occupy', () => {
+        it('should occupy a free table and return it', async () => {
+            const created = await service.create(validInput)
+            const occupied = await service.occupy('r1', created.id)
+            expect(occupied.status).toBe('ocupada')
+            expect((await repo.findById(created.id))?.status).toBe('ocupada')
+        })
+
+        it('should throw TableNotAvailableError when the table is not free', async () => {
+            const created = await service.create(validInput)
+            await service.occupy('r1', created.id)
+            await expect(service.occupy('r1', created.id)).rejects.toThrow(TableNotAvailableError)
+
+            const reserved = await service.create({ ...validInput, number: 2, status: 'reservada' })
+            await expect(service.occupy('r1', reserved.id)).rejects.toThrow(TableNotAvailableError)
+        })
+
+        it('should throw TableNotFoundError when missing or from another restaurant', async () => {
+            const created = await service.create(validInput)
+            await expect(service.occupy('r1', 'nope')).rejects.toThrow(TableNotFoundError)
+            await expect(service.occupy('r2', created.id)).rejects.toThrow(TableNotFoundError)
+            expect((await repo.findById(created.id))?.status).toBe('libre')
         })
     })
 })

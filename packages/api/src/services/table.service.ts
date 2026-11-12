@@ -6,7 +6,9 @@ import {
     InvalidTableNumberError,
     InvalidCapacityError,
     DuplicatedTableNumberError,
-    TableNotFoundError
+    TableNotFoundError,
+    TableNotAvailableError,
+    InvalidPeopleCountError
 } from '@errors/DomainErrors.js'
 
 export interface CreateTableDTO {
@@ -64,6 +66,39 @@ export class TableService {
         return updated
     }
 
+    async delete(restaurantId: string, id: string): Promise<void> {
+        await this.getOwnedTable(restaurantId, id)
+        await this.tableRepository.delete(id)
+    }
+
+    async findById(restaurantId: string, id: string): Promise<RestaurantTable> {
+        return this.getOwnedTable(restaurantId, id)
+    }
+
+    async findByRestaurantId(restaurantId: string): Promise<RestaurantTable[]> {
+        return this.tableRepository.findByRestaurantId(restaurantId)
+    }
+
+    async updateStatus(restaurantId: string, id: string, status: string): Promise<RestaurantTable> {
+        const normalizedStatus = normalizeTableStatus(status)
+        await this.getOwnedTable(restaurantId, id)
+        await this.tableRepository.updateStatus(id, normalizedStatus)
+        return this.getOwnedTable(restaurantId, id)
+    }
+
+    async findAvailable(restaurantId: string, people: unknown): Promise<RestaurantTable[]> {
+        return this.tableRepository.findAvailable(restaurantId, parsePeople(people))
+    }
+
+    async occupy(restaurantId: string, id: string): Promise<RestaurantTable> {
+        await this.getOwnedTable(restaurantId, id)
+        const occupied = await this.tableRepository.occupyIfFree(id)
+        if (!occupied) {
+            throw new TableNotAvailableError()
+        }
+        return this.getOwnedTable(restaurantId, id)
+    }
+
     private async getOwnedTable(restaurantId: string, id: string): Promise<RestaurantTable> {
         const table = await this.tableRepository.findById(id)
         if (!table || table.restaurantId !== restaurantId) {
@@ -111,6 +146,14 @@ export class TableService {
 
 function isPositiveInteger(value: unknown): value is number {
     return typeof value === 'number' && Number.isInteger(value) && value > 0
+}
+
+function parsePeople(value: unknown): number {
+    const people = typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value
+    if (!isPositiveInteger(people)) {
+        throw new InvalidPeopleCountError()
+    }
+    return people
 }
 
 function normalizeDescription(value: unknown): string | null {
