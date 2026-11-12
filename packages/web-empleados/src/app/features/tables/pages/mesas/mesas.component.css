@@ -1,0 +1,131 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-number {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.table-capacity,
+.table-description,
+.no-orders {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.status-libre {
+  background: var(--green-glow);
+  color: var(--green-light);
+}
+
+.status-ocupada {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.status-reservada {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.table-status-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.table-status-select select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.table-orders {
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+
+.table-orders h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--text-secondary);
+}
+
+.table-order {
+  margin-bottom: 10px;
+}
+
+.order-id {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.item-delivered {
+  opacity: 0.5;
+}
