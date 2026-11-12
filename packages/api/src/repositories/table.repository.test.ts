@@ -99,6 +99,38 @@ describe('SqliteTableRepository (Integration)', () => {
         expect(found).toMatchObject({ number: 5, description: null, capacity: 6, status: 'reservada', updatedAt: 'later', createdAt: now })
     })
 
+    it('should find available tables (libre and capacity >= people) ordered by capacity then number', async () => {
+        await repo.save(table({ id: 'a1', number: 10, capacity: 6 }))
+        await repo.save(table({ id: 'a2', number: 12, capacity: 4 }))
+        await repo.save(table({ id: 'a3', number: 11, capacity: 4 }))
+        await repo.save(table({ id: 'a4', number: 13, capacity: 8, status: 'ocupada' }))
+        await repo.save(table({ id: 'a5', number: 14, capacity: 8, status: 'reservada' }))
+        await repo.save(table({ id: 'a6', number: 15, capacity: 2 }))
+        await repo.save(table({ id: 'a7', restaurantId: 'r2', number: 10, capacity: 6 }))
+
+        const results = await repo.findAvailable('r1', 4)
+        expect(results.map(t => t.id)).toEqual(['t2', 'a3', 'a2', 'a1'])
+    })
+
+    it('should update the status of a table and its updatedAt', async () => {
+        await repo.updateStatus('a1', 'reservada')
+        const found = await repo.findById('a1')
+        expect(found?.status).toBe('reservada')
+        expect(found?.updatedAt).not.toBe(now)
+    })
+
+    it('should occupy a free table only once', async () => {
+        expect(await repo.occupyIfFree('a2')).toBe(true)
+        expect((await repo.findById('a2'))?.status).toBe('ocupada')
+        expect(await repo.occupyIfFree('a2')).toBe(false)
+    })
+
+    it('should not occupy a reserved or missing table', async () => {
+        expect(await repo.occupyIfFree('a5')).toBe(false)
+        expect((await repo.findById('a5'))?.status).toBe('reservada')
+        expect(await repo.occupyIfFree('nope')).toBe(false)
+    })
+
     it('should delete a table', async () => {
         await repo.delete('t1')
         expect(await repo.findById('t1')).toBeNull()

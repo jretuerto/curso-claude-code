@@ -1,5 +1,5 @@
 import { Database } from '@config/database.js'
-import type { RestaurantTable } from '@models/table.model.js'
+import type { RestaurantTable, TableStatusType } from '@models/table.model.js'
 import { normalizeTableStatus } from '@models/table.model.js'
 
 interface TableRow {
@@ -21,6 +21,9 @@ export interface TableRepository {
     findByNumber(restaurantId: string, number: number): Promise<RestaurantTable | null>
     save(table: RestaurantTable): Promise<void>
     delete(id: string): Promise<void>
+    findAvailable(restaurantId: string, people: number): Promise<RestaurantTable[]>
+    updateStatus(id: string, status: TableStatusType): Promise<void>
+    occupyIfFree(id: string): Promise<boolean>
 }
 
 export class SqliteTableRepository implements TableRepository {
@@ -66,6 +69,29 @@ export class SqliteTableRepository implements TableRepository {
 
     async delete(id: string): Promise<void> {
         await this.db.run('DELETE FROM restaurant_tables WHERE id = ?', [id])
+    }
+
+    async findAvailable(restaurantId: string, people: number): Promise<RestaurantTable[]> {
+        const rows = await this.db.all<TableRow>(
+            `${SELECT_COLUMNS} WHERE restaurant_id = ? AND status = 'libre' AND capacity >= ? ORDER BY capacity ASC, number ASC`,
+            [restaurantId, people]
+        )
+        return rows.map(row => this.mapToTable(row))
+    }
+
+    async updateStatus(id: string, status: TableStatusType): Promise<void> {
+        await this.db.run(
+            'UPDATE restaurant_tables SET status = ?, updated_at = ? WHERE id = ?',
+            [status, new Date().toISOString(), id]
+        )
+    }
+
+    async occupyIfFree(id: string): Promise<boolean> {
+        const result = await this.db.run(
+            "UPDATE restaurant_tables SET status = 'ocupada', updated_at = ? WHERE id = ? AND status = 'libre'",
+            [new Date().toISOString(), id]
+        )
+        return result.changes === 1
     }
 
     private mapToTable(row: TableRow): RestaurantTable {
